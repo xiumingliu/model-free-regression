@@ -1,10 +1,13 @@
 clear all, close all
 
 %% Generate data from a non-parametric logistic model
-N = 300; 
-M = 100;
-D = 2;
-K = 20;
+N = 1000;   % Number of training data
+N_labeled = 300; 
+N_unlabeled = N - N_labeled; 
+
+M = 100;    % Number of testing data
+D = 2;      % Dimensions of inputs
+K = 20;     % Initial number of categories of GMMs 
 fpath = 'figures'; 
 
 % Generate random inputs with a Gaussian mixture model
@@ -40,7 +43,7 @@ z = g + epsilon;
 
 % Generate outputs y
 y = logsig(z);
-y_training = y(1:N);
+y_training = y(1:N_labeled);
 y_testing = y(N+1:N+M);
 
 % Visualize data
@@ -54,7 +57,9 @@ saveas(gcf, fullfile(fpath, 'histogram.png'));
 
 figure; % Scatter plot 
 hold on;
-scatter(X_training(:, 1), X_training(:, 2), [], y_training, 'filled'); colorbar;
+scatter(X_training(1:N_labeled, 1), X_training(1:N_labeled, 2), [], y_training, 'filled'); colorbar;
+scatter(X_training(N_labeled+1:N, 1), X_training(N_labeled+1:N, 2), [], ...
+    'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
 xlim([-5 5]);
 ylim([-5 5]);
 caxis([0 1]);
@@ -111,7 +116,7 @@ saveas(gcf, fullfile(fpath, 'gmm_training.png'));
 y_0 = y_training(y_training < .5);
 X_0 = X_training(y_training < .5, :);
 
-q_y0 = length(y_0)/length(y);
+q_y0 = length(y_0)/length(y_training);
 
 [~, model, ~] = mixGaussVb(X_0', K);
 N_k = sum(model.R);
@@ -149,7 +154,7 @@ saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
 y_1 = y_training(y_training > .5);
 X_1 = X_training(y_training > .5, :);
 
-q_y1 = length(y_1)/length(y);
+q_y1 = length(y_1)/length(y_training);
 
 [~, model, ~] = mixGaussVb(X_1', K);
 N_k = sum(model.R);
