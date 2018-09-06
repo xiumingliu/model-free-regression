@@ -64,7 +64,7 @@ end
 %% Visualize data
 figure('position', [100, 100, 600, 600]); % Marginal distribution of y
 hist(y_training)
-ylim([0 500]);
+ylim([0 1000]);
 xlabel('$y$', 'Interpreter', 'latex');
 ylabel('Histogram of $y$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
