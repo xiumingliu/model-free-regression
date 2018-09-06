@@ -1,14 +1,15 @@
 clear all, close all
 
 %% Generate data from a non-parametric logistic model
-N = 300; 
-M = 100;
+N = 1000; 
+M = 50;
 D = 2;
-K = 20;
+K = 100;
 fpath = 'figures'; 
 
 % Generate random inputs with a Gaussian mixture model
-mu_x = [1.5 1.5; -1.5 -1.5];
+% mu_x = [1.5 1.5; -1.5 -1.5];
+mu_x = [0 0; 0 0];
 COV_x = cat(3, [1 .5; .5 1], [1 -.5; -.5 1]);
 p = ones(1, 2)/2;
 gm = gmdistribution(mu_x, COV_x, p);
@@ -18,7 +19,7 @@ X_training = X(1:N, :);
 X_testing = X(N+1:N+M, :);
 
 % Construct the GP: g ~ GP
-alpha = 100000; theta = 1;
+alpha = 1e6; theta = 1;
 f_mean = @(x) zeros(length(x), 1);
 f_cov = @(x1, x2) alpha^2*exp(-(norm(x1 - x2))^2/(2*theta^2));
 
@@ -35,44 +36,64 @@ g = mvnrnd(mu_g, COV_g)';
 % z = g + epsilon
 var_epsilon = .01; 
 epsilon = normrnd(0, sqrt(var_epsilon), N+M, 1);
-
 z = g + epsilon; 
 
 % Generate outputs y
-y = logsig(z);
+y = round(logsig(z));
 y_training = y(1:N);
 y_testing = y(N+1:N+M);
 
-% Visualize data
-figure; % Marginal distribution of y
+idx_training = zeros(N, 1);
+for n = 1:N
+    if y_training(n) < .5
+        idx_training(n) = 0;
+    else
+        idx_training(n) = 1;
+    end
+end
+
+idx_testing = zeros(M, 1);
+for m = 1:M
+    if y_testing(m) < .5
+        idx_testing(m) = 0;
+    else
+        idx_testing(m) = 1;
+    end
+end
+
+%% Visualize data
+figure('position', [100, 100, 600, 600]); % Marginal distribution of y
 hist(y_training)
-ylim([0 1000]);
-xlabel('y');
-ylabel('Histogram of output y');
+ylim([0 500]);
+xlabel('$y$', 'Interpreter', 'latex');
+ylabel('Histogram of $y$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'histogram.png'));
 
-figure; % Scatter plot 
-hold on;
-scatter(X_training(:, 1), X_training(:, 2), [], y_training, 'filled'); colorbar;
-xlim([-5 5]);
-ylim([-5 5]);
-caxis([0 1]);
-xlabel('x_1');
-ylabel('x_2');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_training.png'));
+% figure('position', [100, 100, 600, 600]); % Scatter plot 
+% hold on;
+% scatter(X_training((idx_training==0),1), X_training((idx_training==0),2), 50, 'ok');
+% scatter(X_training((idx_training==1),1), X_training((idx_training==1),2), 50, 'xk');
+% xlim([-5 5]);
+% ylim([-5 5]);
+% caxis([0 1]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'scatter_training.png'));
 
-figure; % Scatter plot 
-hold on;
-scatter(X_testing(:, 1), X_testing(:, 2), [], y_testing, 'filled'); colorbar;
-xlim([-5 5]);
-ylim([-5 5]);
-caxis([0 1]);
-xlabel('x_1');
-ylabel('x_2');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
+%%
+% figure('position', [100, 100, 600, 600]);  % Scatter plot 
+% hold on;
+% scatter(X_testing((idx_testing==0),1), X_testing((idx_testing==0),2), 50, 'ok');
+% scatter(X_testing((idx_testing==1),1), X_testing((idx_testing==1),2), 50, 'xk');
+% xlim([-5 5]);
+% ylim([-5 5]);
+% caxis([0 1]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
 
 %% Approximate p(x) with VB-GMM
 [~, model, ~] = mixGaussVb(X_training', K);
@@ -91,18 +112,19 @@ pi_hat = (model.alpha/sum(model.alpha));
 
 gm_x = gmdistribution(mu_hat', COV_hat, pi_hat);
 
-idx = cluster(gm_x, X);
+% idx = cluster(gm_x, X);
 
-figure;
-hold on
-gscatter(X(:,1), X(:,2), idx, 'kkkkk', '', 18*ones(1, K));
+figure('position', [100, 100, 600, 600]); hold on;
+scatter(X_training((idx_training==0),1), X_training((idx_training==0),2), 50, 'ok');
+scatter(X_training((idx_training==1),1), X_training((idx_training==1),2), 50, 'xk');
 fcontour(@(x1, x2)pdf(gm_x, [x1 x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
 colorbar;
+colormap(jet);
 legend('off');
 xlim([-5 5]);
 ylim([-5 5]);
-xlabel('x_1');
-ylabel('x_2');
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training.png'));
 
@@ -129,18 +151,17 @@ pi_hat = (model.alpha/sum(model.alpha));
 
 gm_y0 = gmdistribution(mu_hat', COV_hat, pi_hat);
 
-idx = cluster(gm_y0, X_0);
-
-figure;
+figure('position', [100, 100, 600, 600]);
 hold on
-gscatter(X_0(:, 1), X_0(:, 2), idx, 'kkkkk', '', 18*ones(1, K)); 
+scatter(X_0(:, 1), X_0(:, 2), 50, 'ok'); 
 fcontour(@(x1, x2)pdf(gm_y0, [x1 x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
 colorbar;
+colormap(jet);
 legend('off');
 xlim([-5 5]);
 ylim([-5 5]);
-xlabel('x_1');
-ylabel('x_2');
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
 
@@ -167,31 +188,34 @@ pi_hat = (model.alpha/sum(model.alpha));
 
 gm_y1 = gmdistribution(mu_hat', COV_hat, pi_hat);
 
-idx = cluster(gm_y1, X_1);
-
-figure;
+figure('position', [100, 100, 600, 600]);
 hold on
-gscatter(X_1(:, 1), X_1(:, 2), idx, 'kkkkk', '', 18*ones(1, K)); 
+scatter(X_1(:, 1), X_1(:, 2), 50, 'xk'); 
 fcontour(@(x1, x2)pdf(gm_y1, [x1 x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
 colorbar;
+colormap(jet);
 legend('off');
 xlim([-5 5]);
 ylim([-5 5]);
-xlabel('x_1');
-ylabel('x_2');
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
 
 %% Testing
-mu_y_test = zeros(M, 1);
+post_1 = zeros(M, 1);
+post_0 = zeros(M, 1);
 y_predict = zeros(M, 1);
 w_1 = zeros(M, 1);
+w_0 = zeros(M, 1);
 
 for m = 1:M
     % w_x = q(x | y)/q(x)
     w_1(m) = pdf(gm_y1, X_testing(m, :))/pdf(gm_x, X_testing(m, :));
-    mu_y_test(m) = w_1(m)*q_y1;
-    if mu_y_test(m) >= .5
+    w_0(m) = pdf(gm_y0, X_testing(m, :))/pdf(gm_x, X_testing(m, :));
+    post_1(m) = w_1(m)*q_y1;
+    post_0(m) = w_0(m)*q_y0;
+    if post_1(m) >= post_0(m)
         y_predict(m) = 1;
     else
         y_predict(m) = 0;
@@ -199,48 +223,74 @@ for m = 1:M
 end
 
 num_errors = nnz(y_testing - y_predict);
-mse = mean((y_testing - mu_y_test).^2);
+mse = mean((y_testing - post_1).^2);
 
-f_weight_1 = @(x1, x2) pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2]);
-f_weight_0 = @(x1, x2) pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2]);
+f_1 = @(x1, x2) pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2])*q_y1;
+f_0 = @(x1, x2) pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2])*q_y0;
 
-figure; % Scatter plot 
+llist = [-.9999 -.999 -.99 -0.95:.5:.95 .99 .999 .9999];
+
+figure('position', [100, 100, 600, 600]); % Scatter plot 
 hold on;
-scatter(X_testing(:, 1), X_testing(:, 2), [], mu_y_test, 'filled'); colorbar;
-fcontour(@(x1, x2)pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
+scatter(X_testing((y_predict==0),1), X_testing((y_predict==0),2), 50, 'ok');
+scatter(X_testing((y_predict==1),1), X_testing((y_predict==1),2), 50, 'xk');
+scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 100, 'square', 'r', 'filled'); 
+fcontour(@(x1, x2)(pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2])*q_y1 - pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2])*q_y0), [-5 5 -5 5], '-b', 'LevelList', [0], 'LineWidth', 1)
 xlim([-5 5]);
 ylim([-5 5]);
-caxis([0 1]);
-xlabel('x_1');
-ylabel('x_2');
+% caxis([-1 1]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'scatter_testing_mu.png'));
 
-figure; % Scatter plot 
+y_predict_EP = zeros(M, 1); 
+for m = 1:M
+    if y_predict(m) == 0
+        y_predict_EP(m) = pdf(gm_y1, [X_testing(m,1), X_testing(m,2)])...
+            ./pdf(gm_x, [X_testing(m,1), X_testing(m,2)])*q_y1;
+    else
+        y_predict_EP(m) = pdf(gm_y0, [X_testing(m,1), X_testing(m,2)])...
+            ./pdf(gm_x, [X_testing(m,1), X_testing(m,2)])*q_y0;
+    end
+end
+
+figure('position', [100, 100, 600, 600]); % Scatter plot 
 hold on;
-scatter(X_testing(:, 1), X_testing(:, 2), [], y_predict, 'filled'); colorbar;
-scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 150, 'square', 'r', 'filled'); 
-fcontour(@(x1, x2)pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
+scatter(X_testing((y_predict==0),1), X_testing((y_predict==0),2), 50, y_predict_EP((y_predict==0)), 'o', 'LineWidth', 3);
+scatter(X_testing((y_predict==1),1), X_testing((y_predict==1),2), 50, y_predict_EP((y_predict==1)), 'x', 'LineWidth', 3);
+% scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 100, 'square', 'r', 'filled'); 
 xlim([-5 5]);
 ylim([-5 5]);
-caxis([0 1]);
-xlabel('x_1');
-ylabel('x_2');
+colormap(jet)
+colorbar;
+% caxis([-1 1]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing_predict.png'));
+saveas(gcf, fullfile(fpath, 'scatter_testing_mu.png'));
 
-f_var = @(x1, x2) (0 - f_weight_1(x1, x2)*q_y1)^2*f_weight_0(x1, x2)*q_y0 + (1 - f_weight_1(x1, x2)*q_y1)^2*f_weight_1(x1, x2)*q_y1;
-max_var = 0.5*0.5;
+figure('position', [100, 100, 600, 600]);
+plot(w_0*q_y0 + w_1*q_y1, 'o-')
 
-figure; % Scatter plot 
-hold on;
-scatter(X_testing(:, 1), X_testing(:, 2), [], 'k', 'filled'); colorbar;
-scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 150, 'square', 'r', 'filled'); 
-fcontour(f_var, [-5 5 -5 5], 'LevelList', max_var*[.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
-xlim([-5 5]);
-ylim([-5 5]);
-caxis([0 max_var]);
-xlabel('x_1');
-ylabel('x_2');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing_variance.png'));
+% x1 = -2:.1:2;
+% x2 = 2:-.1:-2;
+% DP = zeros(length(x1), length(x1));
+% for col = 1:length(x1)
+%     for row = 1:length(x2)
+%         % predict 
+%         w_1 = pdf(gm_y1, [x1(col), x2(row)])/pdf(gm_x, [x1(col), x2(row)]);
+%         w_0 = pdf(gm_y0, [x1(col), x2(row)])/pdf(gm_x, [x1(col), x2(row)]);
+%         post_1 = w_1*q_y1;
+%         post_0 = w_0*q_y0;
+%         if post_1 > post_0        
+%             DP(col, row) = post_0;
+%         else
+%             DP(col, row) = post_1;
+%         end
+%     end
+% end
+% % caxis([0 1]);
+% figure('position', [100, 100, 600, 600]); % Scatter plot 
+% imagesc(x1, x2, DP)
+
