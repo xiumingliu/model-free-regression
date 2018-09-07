@@ -64,36 +64,11 @@ end
 %% Visualize data
 figure('position', [100, 100, 600, 600]); % Marginal distribution of y
 hist(y_training)
-ylim([0 500]);
+ylim([0 1000]);
 xlabel('$y$', 'Interpreter', 'latex');
 ylabel('Histogram of $y$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'histogram.png'));
-
-% figure('position', [100, 100, 600, 600]); % Scatter plot 
-% hold on;
-% scatter(X_training((idx_training==0),1), X_training((idx_training==0),2), 50, 'ok');
-% scatter(X_training((idx_training==1),1), X_training((idx_training==1),2), 50, 'xk');
-% xlim([-5 5]);
-% ylim([-5 5]);
-% caxis([0 1]);
-% xlabel('$x_1$', 'Interpreter', 'latex');
-% ylabel('$x_2$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'scatter_training.png'));
-
-%%
-% figure('position', [100, 100, 600, 600]);  % Scatter plot 
-% hold on;
-% scatter(X_testing((idx_testing==0),1), X_testing((idx_testing==0),2), 50, 'ok');
-% scatter(X_testing((idx_testing==1),1), X_testing((idx_testing==1),2), 50, 'xk');
-% xlim([-5 5]);
-% ylim([-5 5]);
-% caxis([0 1]);
-% xlabel('$x_1$', 'Interpreter', 'latex');
-% ylabel('$x_2$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
 
 %% Approximate p(x) with VB-GMM
 [~, model, ~] = mixGaussVb(X_training', K);
@@ -165,6 +140,13 @@ ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
 
+figure('position', [100, 100, 600, 600]);
+scatter(gm_y0.mu(:, 1), gm_y0.mu(:, 2), 1000*gm_y0.ComponentProportion)
+xlim([-5 5]);
+ylim([-5 5]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+
 %% For p(x | y = 1)
 
 y_1 = y_training(y_training > .5);
@@ -201,6 +183,9 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
+
+%% Scaling
+h = @((x1, x2))
 
 %% Testing
 post_1 = zeros(M, 1);
@@ -272,25 +257,4 @@ saveas(gcf, fullfile(fpath, 'scatter_probability_error.png'));
 
 figure('position', [100, 100, 600, 600]);
 plot(w_0*q_y0 + w_1*q_y1, 'o-')
-
-% x1 = -2:.1:2;
-% x2 = 2:-.1:-2;
-% DP = zeros(length(x1), length(x1));
-% for col = 1:length(x1)
-%     for row = 1:length(x2)
-%         % predict 
-%         w_1 = pdf(gm_y1, [x1(col), x2(row)])/pdf(gm_x, [x1(col), x2(row)]);
-%         w_0 = pdf(gm_y0, [x1(col), x2(row)])/pdf(gm_x, [x1(col), x2(row)]);
-%         post_1 = w_1*q_y1;
-%         post_0 = w_0*q_y0;
-%         if post_1 > post_0        
-%             DP(col, row) = post_0;
-%         else
-%             DP(col, row) = post_1;
-%         end
-%     end
-% end
-% % caxis([0 1]);
-% figure('position', [100, 100, 600, 600]); % Scatter plot 
-% imagesc(x1, x2, DP)
 
