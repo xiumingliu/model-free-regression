@@ -215,14 +215,10 @@ for m = 1:M
         y_predict(m) = 0;
     end
 end
-
 num_errors = nnz(y_testing - y_predict);
 mse = mean((y_testing - post_1).^2);
 
-
-
 llist = [-.9999 -.999 -.99 -0.95:.5:.95 .99 .999 .9999];
-
 figure('position', [100, 100, 600, 600]); % Scatter plot 
 hold on;
 scatter(X_testing((y_predict==0),1), X_testing((y_predict==0),2), 50, 'ok');

@@ -63,25 +63,70 @@ for m = 1:M
 end
 
 %% Visualize data
-% figure('position', [100, 100, 600, 600]); % Marginal distribution of y
-% hist(y_training)
-% ylim([0 1000]);
-% xlabel('$y$', 'Interpreter', 'latex');
-% ylabel('Histogram of $y$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'histogram.png'));
+figure('position', [100, 100, 600, 600]); % Marginal distribution of y
+hist(y_training)
+ylim([0 1000]);
+xlabel('$y$', 'Interpreter', 'latex');
+ylabel('Histogram of $y$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'histogram.png'));
 
+% Training
 [~, model_x, ~] = mixGaussVb(X_training', K);
+N_k = sum(model.R);
+mu_hat = zeros(D, K);
+for k = 1:K
+    r_nk = model.R(:, k);
+    mu_hat(:, k) = (1/N_k(k))*sum(r_nk.*X_training);
+end
+COV_hat = zeros(D, D, K);
+for k = 1:K
+    r_nk = model.R(:, k);
+    COV_hat(:, :, k) = (1/N_k(k))*((sqrt(r_nk').*(X_training' - mu_hat(:, k)))*(sqrt(r_nk').*(X_training' - mu_hat(:, k)))');
+end
+pi_hat = (model.alpha/sum(model.alpha));
+gm_x = gmdistribution(mu_hat', COV_hat, pi_hat);
 
+figure('position', [100, 100, 600, 600]); hold on;
+scatter(X_training((idx_training==0),1), X_training((idx_training==0),2), 50, 'ok');
+scatter(X_training((idx_training==1),1), X_training((idx_training==1),2), 50, 'xk');
+fcontour(@(x1, x2)pdf(gm_x, [x1 x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
+colorbar;
+colormap(jet);
+legend('off');
+xlim([-5 5]);
+ylim([-5 5]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'gmm_training.png'));
+
+% For p(x | y = 0)
 y_0 = y_training(y_training < .5);
 X_0 = X_training(y_training < .5, :);
 q_y0 = length(y_0)/length(y);
 [~, model_y0, ~] = mixGaussVb(X_0', K);
+N_k = sum(model.R);
+mu_hat = zeros(D, K);
+for k = 1:K
+    r_nk = model.R(:, k);
+    mu_hat(:, k) = (1/N_k(k))*sum(r_nk.*X_0);
+end
+COV_hat = zeros(D, D, K);
+for k = 1:K
+    r_nk = model.R(:, k);
+    COV_hat(:, :, k) = (1/N_k(k))*((sqrt(r_nk').*(X_0' - mu_hat(:, k)))*(sqrt(r_nk').*(X_0' - mu_hat(:, k)))');
+end
+pi_hat = (model.alpha/sum(model.alpha));
+gm_y0 = gmdistribution(mu_hat', COV_hat, pi_hat);
 
+% For p(x | y = 1)
 y_1 = y_training(y_training > .5);
 X_1 = X_training(y_training > .5, :);
 q_y1 = length(y_1)/length(y);
 [~, model_y1, ~] = mixGaussVb(X_1', K);
+
+
 
 figure('position', [100, 100, 600, 600]); % Scatter plot 
 hold on;
@@ -90,7 +135,7 @@ scatter(X_testing((y_testing==1),1), X_testing((y_testing==1),2), 50, 'xk');
 
 llist = [-.9999 -.999 -.99 -0.95:.5:.95 .99 .999 .9999];
 linecolors = {'y', 'm', 'c', 'r', 'g', 'b', 'w', 'k'};
-for num_sim = 1:8
+for num_sim = 1:20
 % Approximate p(x) with VB-GMM
 N_k = sum(model_x.R);
 
@@ -208,7 +253,7 @@ h = @(x1, x2) (pdf(gm_x, [x1, x2]))/...
 fcontour(@(x1, x2)(pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2])*q_y1 -...
     pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2])*q_y0),...
     [min(min(X_testing)) max(max(X_testing)) min(min(X_testing)) max(max(X_testing))],...
-    '-', 'LevelList', [0], 'LineWidth', 1, 'LineColor', linecolors(num_sim))
+    '--b', 'LevelList', [0], 'LineWidth', 1);
 
 end
 
@@ -223,4 +268,4 @@ ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
+saveas(gcf, fullfile(fpath, 'simulation.png'));
