@@ -99,8 +99,14 @@ this_cov = zeros(D, D, K);
 this_W = model_x.W;
 for k = 1:K
     this_W(2, 1, k) = this_W(1, 2, k);
-    this_cov(:, :, k) = (model_x.beta(k)*this_W(:, :, k) + 0.01*eye(D, D))^-1;
-    
+    this_cov(:, :, k) = (model_x.beta(k)*this_W(:, :, k))^-1;
+    [~, isspd] = chol(this_cov(:, :, k));
+    multiplier = 1;
+    while isspd
+        this_cov(:, :, k) = this_cov(:, :, k) + (0.01*10^(multiplier))*eye(D, D);
+        multiplier = multiplier + 1;
+        [~, isspd] = chol(this_cov(:, :, k));
+    end 
 end
 mu_hat = mvnrnd(this_mu, this_cov)';
 
@@ -121,7 +127,14 @@ this_cov = zeros(D, D, K);
 this_W = model_y0.W;
 for k = 1:K
     this_W(2, 1, k) = this_W(1, 2, k);
-    this_cov(:, :, k) = (model_y0.beta(k)*this_W(:, :, k) + 0.01*eye(D, D))^-1;
+    this_cov(:, :, k) = (model_y0.beta(k)*this_W(:, :, k))^-1;
+    [~, isspd] = chol(this_cov(:, :, k));
+    multiplier = 1;
+    while isspd
+        this_cov(:, :, k) = this_cov(:, :, k) + (0.01*10^(multiplier))*eye(D, D);
+        multiplier = multiplier + 1;
+        [~, isspd] = chol(this_cov(:, :, k));
+    end 
 end
 mu_hat = mvnrnd(this_mu, this_cov)';
 
@@ -142,7 +155,14 @@ this_cov = zeros(D, D, K);
 this_W = model_y1.W;
 for k = 1:K
     this_W(2, 1, k) = this_W(1, 2, k);
-    this_cov(:, :, k) = (model_y1.beta(k)*this_W(:, :, k) + 0.01*eye(D, D))^-1;
+    this_cov(:, :, k) = (model_y1.beta(k)*this_W(:, :, k))^-1;
+    [~, isspd] = chol(this_cov(:, :, k));
+    multiplier = 1;
+    while isspd
+        this_cov(:, :, k) = this_cov(:, :, k) + (0.01*10^(multiplier))*eye(D, D);
+        multiplier = multiplier + 1;
+        [~, isspd] = chol(this_cov(:, :, k));
+    end 
 end
 mu_hat = mvnrnd(this_mu, this_cov)';
 
@@ -185,7 +205,10 @@ h = @(x1, x2) (pdf(gm_x, [x1, x2]))/...
 % mse = mean((y_testing - post_1).^2);
 
 % scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 100, 'square', 'r', 'filled'); 
-fcontour(@(x1, x2)(pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2])*q_y1 - pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2])*q_y0), [min(min(X_testing)) max(max(X_testing)) min(min(X_testing)) max(max(X_testing))], '-', 'LevelList', [0], 'LineWidth', 1, 'LineColor', linecolors(num_sim))
+fcontour(@(x1, x2)(pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2])*q_y1 -...
+    pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2])*q_y0),...
+    [min(min(X_testing)) max(max(X_testing)) min(min(X_testing)) max(max(X_testing))],...
+    '-', 'LevelList', [0], 'LineWidth', 1, 'LineColor', linecolors(num_sim))
 
 end
 

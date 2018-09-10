@@ -90,7 +90,7 @@ scatter(X_testing((y_testing==1),1), X_testing((y_testing==1),2), 50, 'xk');
 
 llist = [-.9999 -.999 -.99 -0.95:.5:.95 .99 .999 .9999];
 linecolors = {'y', 'm', 'c', 'r', 'g', 'b', 'w', 'k'};
-for num_sim = 1:8
+for num_sim = 1:20
 % Approximate p(x) with VB-GMM
 N_k = sum(model_x.R);
 
@@ -205,7 +205,10 @@ h = @(x1, x2) (pdf(gm_x, [x1, x2]))/...
 % mse = mean((y_testing - post_1).^2);
 
 % scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 100, 'square', 'r', 'filled'); 
-fcontour(@(x1, x2)(pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2])*q_y1 - pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2])*q_y0), [min(min(X_testing)) max(max(X_testing)) min(min(X_testing)) max(max(X_testing))], '-', 'LevelList', [0], 'LineWidth', 1, 'LineColor', linecolors(num_sim))
+fcontour(@(x1, x2)(pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2])*q_y1 -...
+    pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2])*q_y0),...
+    [min(min(X_testing)) max(max(X_testing)) min(min(X_testing)) max(max(X_testing))],...
+    '--b', 'LevelList', [0], 'LineWidth', 1);
 
 end
 
