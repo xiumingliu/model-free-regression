@@ -126,26 +126,7 @@ pi_hat = (model.alpha/sum(model.alpha));
 
 gm_y0 = gmdistribution(mu_hat', COV_hat, pi_hat);
 
-figure('position', [100, 100, 600, 600]);
-hold on
-scatter(X_0(:, 1), X_0(:, 2), 50, 'ok'); 
-fcontour(@(x1, x2)pdf(gm_y0, [x1 x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
-colorbar;
-colormap(jet);
-legend('off');
-xlim([-5 5]);
-ylim([-5 5]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
 
-figure('position', [100, 100, 600, 600]);
-scatter(gm_y0.mu(:, 1), gm_y0.mu(:, 2), 1000*gm_y0.ComponentProportion)
-xlim([-5 5]);
-ylim([-5 5]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
 
 %% For p(x | y = 1)
 
@@ -170,10 +151,40 @@ pi_hat = (model.alpha/sum(model.alpha));
 
 gm_y1 = gmdistribution(mu_hat', COV_hat, pi_hat);
 
+
+
+%% Scaling
+% f_1 = @(x1, x2) pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2])*q_y1;
+% f_0 = @(x1, x2) pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2])*q_y0;
+
+h = @(x1, x2) (pdf(gm_x, [x1, x2]))/...
+    (pdf(gm_y1, [x1, x2])*q_y1 + pdf(gm_y0, [x1, x2])*q_y0);
+
+figure('position', [100, 100, 600, 600]);
+hold on
+scatter(X_0(:, 1), X_0(:, 2), 50, 'ok'); 
+fcontour(@(x1, x2)(h(x1, x2)*pdf(gm_y0, [x1 x2])), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
+colorbar;
+colormap(jet);
+legend('off');
+xlim([-5 5]);
+ylim([-5 5]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
+
+% figure('position', [100, 100, 600, 600]);
+% scatter(gm_y0.mu(:, 1), gm_y0.mu(:, 2), 1000*gm_y0.ComponentProportion)
+% xlim([-5 5]);
+% ylim([-5 5]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+
 figure('position', [100, 100, 600, 600]);
 hold on
 scatter(X_1(:, 1), X_1(:, 2), 50, 'xk'); 
-fcontour(@(x1, x2)pdf(gm_y1, [x1 x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
+fcontour(@(x1, x2)(h(x1, x2)*pdf(gm_y1, [x1 x2])), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
 colorbar;
 colormap(jet);
 legend('off');
@@ -183,13 +194,6 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
-
-%% Scaling
-% f_1 = @(x1, x2) pdf(gm_y1, [x1, x2])/pdf(gm_x, [x1, x2])*q_y1;
-% f_0 = @(x1, x2) pdf(gm_y0, [x1, x2])/pdf(gm_x, [x1, x2])*q_y0;
-
-h = @(x1, x2) (pdf(gm_x, [x1, x2]))/...
-    (pdf(gm_y1, [x1, x2])*q_y1 + pdf(gm_y0, [x1, x2])*q_y0);
 
 %% Testing
 post_1 = zeros(M, 1);
