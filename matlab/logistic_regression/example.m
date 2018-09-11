@@ -8,7 +8,7 @@ N_unlabeled = N - N_labeled;
 M = 50;
 D = 2;
 K = 5;
-fpath = 'figures'; 
+fpath = 'figures2'; 
 
 % Generate random inputs with a Gaussian mixture model
 % mu_x = [1.5 1.5; -1.5 -1.5];
@@ -18,7 +18,8 @@ p = ones(1, 2)/2;
 gm = gmdistribution(mu_x, COV_x, p);
 
 X = random(gm, N+M);
-X_training = X(1:N, :);
+% X_training = X(1:N, :);
+X_training = X(1:N_labeled, :);
 X_testing = X(N+1:N+M, :);
 
 % Construct the GP: g ~ GP
@@ -92,8 +93,8 @@ gm_x = gmdistribution(mu_hat', COV_hat, pi_hat);
 figure('position', [100, 100, 600, 600]); hold on;
 scatter(X_training((idx_training==0),1), X_training((idx_training==0),2), 50, 'ok');
 scatter(X_training((idx_training==1),1), X_training((idx_training==1),2), 50, 'xk');
-scatter(X_training(N_labeled+1:N, 1), X_training(N_labeled+1:N, 2), [], 's', ...
-    'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
+% scatter(X_training(N_labeled+1:N, 1), X_training(N_labeled+1:N, 2), [], 's', ...
+%     'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
 fcontour(@(x1, x2)pdf(gm_x, [x1 x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
 legend('Labeled, class 1', 'Labeled, class 2', 'Unlabeled');
 colorbar;
