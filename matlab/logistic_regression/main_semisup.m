@@ -53,7 +53,7 @@ ylim([0 1000]);
 xlabel('y');
 ylabel('Histogram of output y');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'histogram.png'));
+% saveas(gcf, fullfile(fpath, 'histogram.png'));
 
 figure; % Scatter plot 
 hold on;
@@ -66,7 +66,7 @@ caxis([0 1]);
 xlabel('x_1');
 ylabel('x_2');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_training.png'));
+% saveas(gcf, fullfile(fpath, 'scatter_training.png'));
 
 figure; % Scatter plot 
 hold on;
@@ -77,7 +77,7 @@ caxis([0 1]);
 xlabel('x_1');
 ylabel('x_2');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
+% saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
 
 %% Approximate p(x) with VB-GMM
 [~, model, ~] = mixGaussVb(X_training', K);
@@ -109,7 +109,7 @@ ylim([-5 5]);
 xlabel('x_1');
 ylabel('x_2');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training.png'));
 
 %% For p(x | y = 0)
 
@@ -147,7 +147,7 @@ ylim([-5 5]);
 xlabel('x_1');
 ylabel('x_2');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
 
 %% For p(x | y = 1)
 
@@ -185,7 +185,7 @@ ylim([-5 5]);
 xlabel('x_1');
 ylabel('x_2');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
 
 %% Testing
 mu_y_test = zeros(M, 1);
@@ -219,7 +219,7 @@ caxis([0 1]);
 xlabel('x_1');
 ylabel('x_2');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing_mu.png'));
+% saveas(gcf, fullfile(fpath, 'scatter_testing_mu.png'));
 
 figure; % Scatter plot 
 hold on;
@@ -232,7 +232,7 @@ caxis([0 1]);
 xlabel('x_1');
 ylabel('x_2');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing_predict.png'));
+% saveas(gcf, fullfile(fpath, 'scatter_testing_predict.png'));
 
 f_var = @(x1, x2) (0 - f_weight_1(x1, x2)*q_y1)^2*f_weight_0(x1, x2)*q_y0 + (1 - f_weight_1(x1, x2)*q_y1)^2*f_weight_1(x1, x2)*q_y1;
 max_var = 0.5*0.5;
@@ -248,4 +248,4 @@ caxis([0 max_var]);
 xlabel('x_1');
 ylabel('x_2');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing_variance.png'));
+% saveas(gcf, fullfile(fpath, 'scatter_testing_variance.png'));

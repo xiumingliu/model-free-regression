@@ -68,7 +68,7 @@ ylim([0 1000]);
 xlabel('$y$', 'Interpreter', 'latex');
 ylabel('Histogram of $y$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'histogram.png'));
+% saveas(gcf, fullfile(fpath, 'histogram.png'));
 
 %% Approximate p(x) with VB-GMM
 [~, model, ~] = mixGaussVb(X_training', K);
@@ -86,8 +86,23 @@ end
 pi_hat = (model.alpha/sum(model.alpha));
 
 gm_x = gmdistribution(mu_hat', COV_hat, pi_hat);
+% gm_x = gm_y0*q_y0 + gm_y1*q_y1;
 
 % idx = cluster(gm_x, X);
+
+figure('position', [100, 100, 600, 600]); hold on;
+scatter(X_training((idx_training==0),1), X_training((idx_training==0),2), 50, 'ok');
+scatter(X_training((idx_training==1),1), X_training((idx_training==1),2), 50, 'xk');
+fcontour(@(x1, x2)pdf(gm_y0, [x1 x2])*q_y0 + pdf(gm_y1, [x1 x2])*q_y1, [-5 5 -5 5], 'LevelList', [.0001 .001 .01 .05:.1:.95 .99 .999 .9999], 'LineWidth', 1)
+colorbar;
+colormap(jet);
+legend('off');
+xlim([-5 5]);
+ylim([-5 5]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'gmm_training.png'));
 
 figure('position', [100, 100, 600, 600]); hold on;
 scatter(X_training((idx_training==0),1), X_training((idx_training==0),2), 50, 'ok');
@@ -101,7 +116,7 @@ ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training.png'));
 
 %% For p(x | y = 0)
 
@@ -172,7 +187,7 @@ ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
 
 % figure('position', [100, 100, 600, 600]);
 % scatter(gm_y0.mu(:, 1), gm_y0.mu(:, 2), 1000*gm_y0.ComponentProportion)
@@ -193,7 +208,7 @@ ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
 
 %% Testing
 post_1 = zeros(M, 1);
@@ -231,7 +246,7 @@ ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
+% saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
 
 %% Error probability
 
@@ -260,7 +275,7 @@ colorbar;
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_probability_error.png'));
+% saveas(gcf, fullfile(fpath, 'scatter_probability_error.png'));
 
 figure('position', [100, 100, 600, 600]);
 plot(w_0*q_y0 + w_1*q_y1, 'o-')
