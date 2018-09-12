@@ -2,8 +2,8 @@ clear all
 close all
 
 %% Generate data
-N = 1000; 
-N_labeled = 300; 
+N = 500; 
+N_labeled = 100; 
 N_unlabeled = N - N_labeled; 
 M = 50;
 D = 2;
@@ -11,8 +11,8 @@ K = 5;
 fpath = 'figures2'; 
 
 % Generate random inputs with a Gaussian mixture model
-% mu_x = [1.5 1.5; -1.5 -1.5];
-mu_x = [0 0; 0 0];
+mu_x = [1 1; -1 -1];
+% mu_x = [0 0; 0 0];
 COV_x = cat(3, [1 .5; .5 1], [1 -.5; -.5 1]);
 p = ones(1, 2)/2;
 gm = gmdistribution(mu_x, COV_x, p);
@@ -90,6 +90,7 @@ end
 pi_hat = (model_x.alpha/sum(model_x.alpha));
 gm_x = gmdistribution(mu_hat', COV_hat, pi_hat);
 
+
 figure('position', [100, 100, 600, 600]); hold on;
 scatter(X_training((idx_training==0),1), X_training((idx_training==0),2), 50, 'ok');
 scatter(X_training((idx_training==1),1), X_training((idx_training==1),2), 50, 'xk');
@@ -99,13 +100,15 @@ fcontour(@(x1, x2)pdf(gm_x, [x1 x2]), [-5 5 -5 5], 'LevelList', [.0001 .001 .01 
 legend('Labeled, class 1', 'Labeled, class 2', 'Unlabeled');
 colorbar;
 colormap(jet);
-legend('off');
+% legend('off');
 xlim([-5 5]);
 ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training.png'));
+
+    
 
 % For p(x | y = 0)
 y_0 = y_training(y_training < .5);
