@@ -139,4 +139,4 @@ ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'simulation2.png'));
+saveas(gcf, fullfile(fpath, 'simulation3.png'));
