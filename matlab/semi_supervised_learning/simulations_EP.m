@@ -115,10 +115,23 @@ toc
 end
 
 var_EP = var(y_predict_EP_sim, 0, 3);
+confidence_EP = 2*std(y_predict_EP_sim, 0, 3);
 
 figure('position', [100, 100, 600, 600]);
 hold on;
 contourf(X1_test_EP, X2_test_EP, var_EP);
+colormap(jet)
+colorbar;
+xlim([-5 5]);
+ylim([-5 5]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'simulation2.png'));
+
+figure('position', [100, 100, 600, 600]);
+hold on;
+contourf(X1_test_EP, X2_test_EP, confidence_EP);
 colormap(jet)
 colorbar;
 xlim([-5 5]);
