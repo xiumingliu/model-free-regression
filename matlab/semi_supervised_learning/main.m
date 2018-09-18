@@ -4,8 +4,8 @@ close all
 %% Setup 
 fpath = 'figures1'; 
 
-N_labeled = 500;    % Number of labeled training data 
-N_unlabeled = 500;  % Number of unlabeld training data
+N_labeled = 1000;    % Number of labeled training data 
+N_unlabeled = 0;  % Number of unlabeld training data
 N_testing = 50;     % Number of testing data
 
 D = 2;      % Dimension of the input X
