@@ -234,4 +234,4 @@ set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'scatter_probability_error.png'));
 
 %% Monte Carlo Simulations
-run simulations.m
+run simulations_new.m
