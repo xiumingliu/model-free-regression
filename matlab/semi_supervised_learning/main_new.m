@@ -2,7 +2,7 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures1'; 
+fpath = 'figures2'; 
 
 N_labeled = 100;    % Number of labeled training data 
 N_unlabeled = 100;  % Number of unlabeld training data
@@ -27,6 +27,7 @@ xlabel('$y$', 'Interpreter', 'latex');
 ylabel('Histogram of $y$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'histogram.png'));
+saveas(gcf, fullfile(fpath, 'histogram.fig'));
 
 %% The conditional distribution of unlabeled data 
 % y_0 = y_labeled(y_labeled == 0);
@@ -62,6 +63,7 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_unlabeled.png'));
+saveas(gcf, fullfile(fpath, 'gmm_training_unlabeled.fig'));
 
 %% The conditional distribution p(x | y = 0) and p(x | y = 1), using labeled data
 % p(x | y = 0)
@@ -119,6 +121,7 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
+saveas(gcf, fullfile(fpath, 'gmm_training_0.fig'));
 
 figure('position', [100, 100, 600, 600]);
 hold on
@@ -134,6 +137,7 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
+saveas(gcf, fullfile(fpath, 'gmm_training_1.fig'));
 
 %% The marginal distribution p(x), using both labeled and unlabeld data
 p_x = @(x1, x2) (p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
@@ -157,6 +161,7 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training.png'));
+saveas(gcf, fullfile(fpath, 'gmm_training.fig'));
 
 %% Testing
 y_predict = zeros(N_testing, 1);
@@ -189,6 +194,7 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
+saveas(gcf, fullfile(fpath, 'scatter_testing.fig'));
 
 %% Error probability
 [X1_test_EP, X2_test_EP] = meshgrid(-5:.25:5);
@@ -232,6 +238,10 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'scatter_probability_error.png'));
+saveas(gcf, fullfile(fpath, 'scatter_probability_error.fig'));
 
 %% Monte Carlo Simulations
 run simulations_new.m
+
+run simulations_EP.m
+

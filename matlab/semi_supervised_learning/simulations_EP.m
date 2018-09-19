@@ -2,7 +2,7 @@
 N_testing_EP = length(X1_test_EP);
 y_predict_EP_sim = zeros(N_testing_EP, N_testing_EP, 20); 
 
-for num_sim = 1:500
+for num_sim = 1:2000
 tic
 % For p(x | y = 0)
 N_k = sum(model_xy_0.R);
@@ -128,6 +128,7 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'simulation2.png'));
+saveas(gcf, fullfile(fpath, 'simulation2.fig'));
 
 figure('position', [100, 100, 600, 600]);
 hold on;
@@ -140,3 +141,4 @@ xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'simulation3.png'));
+saveas(gcf, fullfile(fpath, 'simulation3.fig'));
