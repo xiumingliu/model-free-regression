@@ -9,7 +9,7 @@ N_unlabeled = 150;  % Number of unlabeld training data
 N_testing = 50;     % Number of testing data
 
 NUM_SIM_DB = 10;
-NUM_SIM_EP = 500;
+NUM_SIM_EP = 5000;
 
 D = 2;      % Dimension of the input X
 K = 10;     % Number of components used in GMM
