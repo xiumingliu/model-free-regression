@@ -1,4 +1,13 @@
-for num_sim = 1:20
+disp('Simulation decision boundaries start ... ')
+
+figure('position', [100, 100, 600, 600]);
+hold on;
+scatter(X_testing((y_testing==0),1), X_testing((y_testing==0),2), 50, 'ok');
+scatter(X_testing((y_testing==1),1), X_testing((y_testing==1),2), 50, 'xk');
+scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 100, 'square', 'r', 'filled'); 
+
+for num_sim = 1:NUM_SIM_DB
+tic
 % For p(x | y = 0)
 N_k = sum(model_xy_0.R);
 
@@ -56,13 +65,10 @@ this_p_xy1 = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 fcontour(@(x1, x2)(pdf(this_p_xy1, [x1, x2])*p_y_1 - pdf(this_p_xy0, [x1, x2])*p_y_0),...
     [-5 5 -5 5], '--b', 'LevelList', [0], 'LineWidth', 1);
 
+disp(num_sim)
+toc
 end
 
-figure('position', [100, 100, 600, 600]);
-hold on;
-scatter(X_testing((y_testing==0),1), X_testing((y_testing==0),2), 50, 'ok');
-scatter(X_testing((y_testing==1),1), X_testing((y_testing==1),2), 50, 'xk');
-scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 100, 'square', 'r', 'filled'); 
 xlim([-5 5]);
 ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');

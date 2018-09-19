@@ -1,8 +1,9 @@
 [X1_test_EP, X2_test_EP] = meshgrid(-5:.25:5);
 N_testing_EP = length(X1_test_EP);
-y_predict_EP_sim = zeros(N_testing_EP, N_testing_EP, 20); 
+y_predict_EP_sim = zeros(N_testing_EP, N_testing_EP, NUM_SIM_EP); 
 
-for num_sim = 1:2000
+disp('Simulation error probability start ... ')
+for num_sim = 1:NUM_SIM_EP
 tic
 % For p(x | y = 0)
 N_k = sum(model_xy_0.R);
@@ -87,7 +88,7 @@ this_p_xy_unlabeled = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 
 % Marginal distribution p(x)
 this_p_x = @(x1, x2) (p_y_0*pdf(this_p_xy_0, [x1 x2]) + p_y_1*pdf(this_p_xy_1, [x1 x2])...
-    + p_y_ulabeled*pdf(this_p_xy_unlabeled, [x1 x2])); 
+    + p_y_unlabeled*pdf(this_p_xy_unlabeled, [x1 x2])); 
 
 %% Error probability
 for row = 1:N_testing_EP

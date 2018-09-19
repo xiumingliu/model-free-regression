@@ -4,9 +4,9 @@ close all
 %% Setup 
 fpath = 'figures3'; 
 
-N_labeled = 50;    % Number of labeled training data 
-N_unlabeled = 150;  % Number of unlabeld training data
-N_testing = 50;     % Number of testing data
+N_labeled = 10;    % Number of labeled training data 
+N_unlabeled = 100;  % Number of unlabeld training data
+N_testing = 10;     % Number of testing data
 
 NUM_SIM_DB = 10;
 NUM_SIM_EP = 500;
@@ -17,7 +17,7 @@ K = 10;     % Number of components used in GMM
 level_list = [0.001 .01 .1:.1:.9];
 
 %% Generate synthetic data
-run data_generate_new.m
+run data_generate.m
 
 %% Histogram of outputs
 C = categorical([y_labeled; -1*ones(N_unlabeled, 1)], [0 1 -1],...
@@ -152,7 +152,7 @@ scatter(X_unlabeled(:, 1), X_unlabeled(:, 2), 50, 's', ...
 fcontour(@(x1, x2)(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
     + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
 legend('Labeled, class 0', 'Labeled, class 1', 'Unlabeled');
-% colorbar;
+colorbar;
 colormap(jet);
 xlim([-5 5]);
 ylim([-5 5]);
@@ -197,7 +197,7 @@ saveas(gcf, fullfile(fpath, 'testing_decision.png'));
 saveas(gcf, fullfile(fpath, 'testing_decision.fig'));
 
 %% Error probability
-[X1_test_EP, X2_test_EP] = meshgrid(-5:.1:5);
+[X1_test_EP, X2_test_EP] = meshgrid(-5:.25:5);
 N_testing_EP = length(X1_test_EP);
 
 tic

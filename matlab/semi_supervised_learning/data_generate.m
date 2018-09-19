@@ -6,6 +6,7 @@ p = ones(1, 2)/2;       % Weights of components
 gm = gmdistribution(mu_x, COV_x, p);    % GMM model for generating inputs
 
 X = random(gm, N_labeled + N_unlabeled + N_testing);    
+
 X_labeled = X(1:N_labeled, :);
 X_unlabeled = X(N_labeled+1:N_labeled+N_unlabeled, :);
 X_testing = X(N_labeled+N_unlabeled+1:N_labeled+N_unlabeled+N_testing, :);
