@@ -127,8 +127,8 @@ ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'simulation2.png'));
-saveas(gcf, fullfile(fpath, 'simulation2.fig'));
+saveas(gcf, fullfile(fpath, 'simulation_error_var.png'));
+saveas(gcf, fullfile(fpath, 'simulation_error_var.fig'));
 
 figure('position', [100, 100, 600, 600]);
 hold on;
@@ -140,5 +140,5 @@ ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'simulation3.png'));
-saveas(gcf, fullfile(fpath, 'simulation3.fig'));
+saveas(gcf, fullfile(fpath, 'simulation_error_2std.png'));
+saveas(gcf, fullfile(fpath, 'simulation_error_2std.fig'));

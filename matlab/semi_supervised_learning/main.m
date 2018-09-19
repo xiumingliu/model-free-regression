@@ -104,9 +104,6 @@ end
 this_pi_hat = (model_xy_1.alpha/sum(model_xy_1.alpha));
 p_xy_1 = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 
-% Scaling factor
-% h = @(x1, x2) (pdf(p_x, [x1, x2]))/(pdf(p_xy1, [x1, x2])*p_y1 + pdf(p_xy0, [x1, x2])*p_y0);
-
 figure('position', [100, 100, 600, 600]);
 hold on
 scatter(X_0(:, 1), X_0(:, 2), 50, 'ok'); 
@@ -160,8 +157,8 @@ caxis([0 1]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training.png'));
-saveas(gcf, fullfile(fpath, 'gmm_training.fig'));
+saveas(gcf, fullfile(fpath, 'gmm_training_marginal.png'));
+saveas(gcf, fullfile(fpath, 'gmm_training_marginal.fig'));
 
 %% Testing
 y_predict = zeros(N_testing, 1);
@@ -193,8 +190,8 @@ ylim([-5 5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_testing.png'));
-saveas(gcf, fullfile(fpath, 'scatter_testing.fig'));
+saveas(gcf, fullfile(fpath, 'testing_decision.png'));
+saveas(gcf, fullfile(fpath, 'testing_decision.fig'));
 
 %% Error probability
 [X1_test_EP, X2_test_EP] = meshgrid(-5:.25:5);
@@ -237,11 +234,11 @@ caxis([0 .5]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'scatter_probability_error.png'));
-saveas(gcf, fullfile(fpath, 'scatter_probability_error.fig'));
+saveas(gcf, fullfile(fpath, 'error_probability.png'));
+saveas(gcf, fullfile(fpath, 'error_probability.fig'));
 
 %% Monte Carlo Simulations
-run simulations_new.m
+run simulations_DB.m
 
 run simulations_EP.m
 
