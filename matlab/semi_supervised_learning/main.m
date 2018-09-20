@@ -2,17 +2,17 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures3'; 
+fpath = 'figures5'; 
 
 N_labeled = 50;    % Number of labeled training data 
-N_unlabeled = 150;  % Number of unlabeld training data
+N_unlabeled = 500;  % Number of unlabeld training data
 N_testing = 50;     % Number of testing data
 
 NUM_SIM_DB = 10;
 NUM_SIM_EP = 5000;
 
 D = 2;      % Dimension of the input X
-K = 10;     % Number of components used in GMM
+K = 50;     % Number of components used in GMM
 
 level_list = [0.001 .01 .1:.1:.9];
 
@@ -25,7 +25,7 @@ C = categorical([y_labeled; -1*ones(N_unlabeled, 1)], [0 1 -1],...
 
 figure('position', [100, 100, 600, 600]); % Marginal distribution of y
 histogram(C)
-ylim([0 200]);
+ylim([0 600]);
 xlabel('$y$', 'Interpreter', 'latex');
 ylabel('Histogram of $y$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
@@ -241,7 +241,7 @@ saveas(gcf, fullfile(fpath, 'error_probability.png'));
 saveas(gcf, fullfile(fpath, 'error_probability.fig'));
 
 %% Monte Carlo Simulations
-% run simulations_DB.m
-% 
-% run simulations_EP.m
+run simulations_DB.m
+
+run simulations_EP.m
 
