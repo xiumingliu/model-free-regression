@@ -2,22 +2,23 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures3'; 
+fpath = 'figures5'; 
 
-N_labeled = 10;    % Number of labeled training data 
-N_unlabeled = 100;  % Number of unlabeld training data
-N_testing = 10;     % Number of testing data
+N_labeled = 100;    % Number of labeled training data 
+N_unlabeled = 900;  % Number of unlabeld training data
+N_testing = 50;     % Number of testing data
 
 NUM_SIM_DB = 10;
-NUM_SIM_EP = 500;
+NUM_SIM_DT = 5000;
+NUM_SIM_EP = 5000;
 
 D = 2;      % Dimension of the input X
-K = 10;     % Number of components used in GMM
+K = 50;     % Number of components used in GMM
 
 level_list = [0.001 .01 .1:.1:.9];
 
 %% Generate synthetic data
-run data_generate.m
+run data_generate_new.m
 
 %% Histogram of outputs
 C = categorical([y_labeled; -1*ones(N_unlabeled, 1)], [0 1 -1],...
@@ -25,7 +26,7 @@ C = categorical([y_labeled; -1*ones(N_unlabeled, 1)], [0 1 -1],...
 
 figure('position', [100, 100, 600, 600]); % Marginal distribution of y
 histogram(C)
-ylim([0 200]);
+ylim([0 1000]);
 xlabel('$y$', 'Interpreter', 'latex');
 ylabel('Histogram of $y$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
@@ -72,7 +73,8 @@ saveas(gcf, fullfile(fpath, 'gmm_training_unlabeled.fig'));
 % p(x | y = 0)
 y_0 = y_labeled(y_labeled == 0);
 X_0 = X_labeled(y_labeled == 0, :);
-p_y_0 = length(y_0)/(length(y_labeled) + length(y_unlabeled));
+% p_y_0 = length(y_0)/(length(y_labeled) + length(y_unlabeled));
+p_y_0 = (length(y_labeled)/2)/(length(y_labeled) + length(y_unlabeled));
 [~, model_xy_0, ~] = mixGaussVb(X_0', K);
 this_Nk = sum(model_xy_0.R);
 this_mu_hat = zeros(D, K);
@@ -91,7 +93,8 @@ p_xy_0 = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 % p(x | y = 1)
 y_1 = y_labeled(y_labeled == 1);
 X_1 = X_labeled(y_labeled == 1, :);
-p_y_1 = length(y_1)/length(y);
+% p_y_1 = length(y_1)/length(y);
+p_y_1 = (length(y_labeled)/2)/(length(y_labeled) + length(y_unlabeled));
 [~, model_xy_1, ~] = mixGaussVb(X_1', K);
 this_N_k = sum(model_xy_1.R);
 this_mu_hat = zeros(D, K);
@@ -152,7 +155,7 @@ scatter(X_unlabeled(:, 1), X_unlabeled(:, 2), 50, 's', ...
 fcontour(@(x1, x2)(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
     + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
 legend('Labeled, class 0', 'Labeled, class 1', 'Unlabeled');
-colorbar;
+% colorbar;
 colormap(jet);
 xlim([-5 5]);
 ylim([-5 5]);
@@ -197,7 +200,7 @@ saveas(gcf, fullfile(fpath, 'testing_decision.png'));
 saveas(gcf, fullfile(fpath, 'testing_decision.fig'));
 
 %% Error probability
-[X1_test_EP, X2_test_EP] = meshgrid(-5:.25:5);
+[X1_test_EP, X2_test_EP] = meshgrid(-5:.1:5);
 N_testing_EP = length(X1_test_EP);
 
 tic
@@ -241,7 +244,9 @@ saveas(gcf, fullfile(fpath, 'error_probability.png'));
 saveas(gcf, fullfile(fpath, 'error_probability.fig'));
 
 %% Monte Carlo Simulations
+run simulations_DT.m
+
 % run simulations_DB.m
-% 
-% run simulations_EP.m
+
+run simulations_EP.m
 
