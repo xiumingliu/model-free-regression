@@ -4,11 +4,12 @@ close all
 %% Setup 
 fpath = 'figures5'; 
 
-N_labeled = 50;    % Number of labeled training data 
-N_unlabeled = 500;  % Number of unlabeld training data
+N_labeled = 100;    % Number of labeled training data 
+N_unlabeled = 900;  % Number of unlabeld training data
 N_testing = 50;     % Number of testing data
 
 NUM_SIM_DB = 10;
+NUM_SIM_DT = 5000;
 NUM_SIM_EP = 5000;
 
 D = 2;      % Dimension of the input X
@@ -25,7 +26,7 @@ C = categorical([y_labeled; -1*ones(N_unlabeled, 1)], [0 1 -1],...
 
 figure('position', [100, 100, 600, 600]); % Marginal distribution of y
 histogram(C)
-ylim([0 600]);
+ylim([0 1000]);
 xlabel('$y$', 'Interpreter', 'latex');
 ylabel('Histogram of $y$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
@@ -72,7 +73,8 @@ saveas(gcf, fullfile(fpath, 'gmm_training_unlabeled.fig'));
 % p(x | y = 0)
 y_0 = y_labeled(y_labeled == 0);
 X_0 = X_labeled(y_labeled == 0, :);
-p_y_0 = length(y_0)/(length(y_labeled) + length(y_unlabeled));
+% p_y_0 = length(y_0)/(length(y_labeled) + length(y_unlabeled));
+p_y_0 = (length(y_labeled)/2)/(length(y_labeled) + length(y_unlabeled));
 [~, model_xy_0, ~] = mixGaussVb(X_0', K);
 this_Nk = sum(model_xy_0.R);
 this_mu_hat = zeros(D, K);
@@ -91,7 +93,8 @@ p_xy_0 = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 % p(x | y = 1)
 y_1 = y_labeled(y_labeled == 1);
 X_1 = X_labeled(y_labeled == 1, :);
-p_y_1 = length(y_1)/length(y);
+% p_y_1 = length(y_1)/length(y);
+p_y_1 = (length(y_labeled)/2)/(length(y_labeled) + length(y_unlabeled));
 [~, model_xy_1, ~] = mixGaussVb(X_1', K);
 this_N_k = sum(model_xy_1.R);
 this_mu_hat = zeros(D, K);
@@ -241,7 +244,9 @@ saveas(gcf, fullfile(fpath, 'error_probability.png'));
 saveas(gcf, fullfile(fpath, 'error_probability.fig'));
 
 %% Monte Carlo Simulations
-run simulations_DB.m
+run simulations_DT.m
+
+% run simulations_DB.m
 
 run simulations_EP.m
 

@@ -36,7 +36,7 @@ X_testing = X(N_labeled+N_unlabeled+1:N_labeled+N_unlabeled+N_testing, :);
 
 y = zeros((N_labeled + N_unlabeled + N_testing), 1);
 for n = 1:(N_labeled + N_unlabeled + N_testing)
-    if sqrt(X(n, 1)^2 + X(n, 2)^2) < 1
+    if sqrt(X(n, 1)^2 + X(n, 2)^2) < 1.25
         y(n) = 1;
     else 
         y(n) = 0;
