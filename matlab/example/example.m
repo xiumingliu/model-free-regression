@@ -9,8 +9,8 @@ N_unlabeled = 900;  % Number of unlabeld training data
 % N_testing = 50;     % Number of testing data
 
 NUM_SIM_DB = 10;
-NUM_SIM_DT = 5000;
-NUM_SIM_EP = 5000;
+NUM_SIM_DT = 100;
+NUM_SIM_EP = 100;
 
 D = 2;      % Dimension of the input X
 K = 50;     % Number of components used in GMM
@@ -381,9 +381,9 @@ saveas(gcf, fullfile(fpath, 'correct_probability.png'));
 saveas(gcf, fullfile(fpath, 'correct_probability.fig'));
 
 %% Monte Carlo Simulations
-% run simulations_DT.m
+run simulations_DT.m
 
 % run simulations_DB.m
 
-% run simulations_EP.m
+run simulations_EP.m
 
