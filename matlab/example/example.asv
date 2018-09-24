@@ -15,7 +15,7 @@ NUM_SIM_EP = 5000;
 D = 2;      % Dimension of the input X
 K = 50;     % Number of components used in GMM
 
-level_list = [0.001 .01 .1:.1:.9 .99 .999];
+level_list = [0.001 .01 .1:.1:.9];
 
 %% Generate synthetic data
 run data_generate.m
@@ -196,12 +196,10 @@ scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 
 scatter(X_unlabeled((y_unlabeled==1), 1), X_unlabeled((y_unlabeled==1), 2), 50, 's', 'LineWidth', 1,...
     'MarkerFaceColor','b','MarkerEdgeColor','b','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
 
-% fcontour(@(x1, x2)(pdf(p_xy_1, [x1, x2])/(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
-%     + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2]))*p_y_1 ...
-%     - pdf(p_xy_0, [x1, x2])/(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
-%     + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2]))*p_y_0), ...
-%     [-5 5 -5 5], '-k', 'LevelList', [0], 'LineWidth', 3)
-fcontour(@(x1, x2)(pdf(p_xy_1, [x1, x2]) - pdf(p_xy_0, [x1, x2])), ...
+fcontour(@(x1, x2)(pdf(p_xy_1, [x1, x2])/(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
+    + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2]))*p_y_1 ...
+    - pdf(p_xy_0, [x1, x2])/(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
+    + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2]))*p_y_0), ...
     [-5 5 -5 5], '-k', 'LevelList', [0], 'LineWidth', 3)
 legend('Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', 'unlabeled, class 1', 'Decision boundaries', 'Location', 'southeast');
 xlim([-5 5]);
@@ -250,11 +248,11 @@ for row = 1:N_testing_EP
     for col = 1:N_testing_EP
         this_x_testing = [X1_test_EP(row,col), X2_test_EP(row,col)];
         % Normalization
-        this_p_yx_0 = (pdf(p_xy_0, this_x_testing)*p_y_0)/p_x(this_x_testing(1), this_x_testing(2));
-        this_p_yx_1 = (pdf(p_xy_1, this_x_testing)*p_y_1)/p_x(this_x_testing(1), this_x_testing(2));
+%         this_p_yx_0 = (pdf(p_xy_0, this_x_testing)*p_y_0)/p_x(this_x_testing(1), this_x_testing(2));
+%         this_p_yx_1 = (pdf(p_xy_1, this_x_testing)*p_y_1)/p_x(this_x_testing(1), this_x_testing(2));
         
-%         this_p_yx_0 = (pdf(p_xy_0, this_x_testing)*.5)/p_x(this_x_testing(1), this_x_testing(2));
-%         this_p_yx_1 = (pdf(p_xy_1, this_x_testing)*.5)/p_x(this_x_testing(1), this_x_testing(2));
+        this_p_yx_0 = (pdf(p_xy_0, this_x_testing)*.)/p_x(this_x_testing(1), this_x_testing(2));
+        this_p_yx_1 = (pdf(p_xy_1, this_x_testing)*p_y_1)/p_x(this_x_testing(1), this_x_testing(2));
         
         this_normalizor = 1/(this_p_yx_0 + this_p_yx_1);
         this_p_yx_0 = this_p_yx_0*this_normalizor;
@@ -300,10 +298,6 @@ for row = 1:N_testing_EP
         % Normalization
         this_p_yx_0 = (pdf(p_xy_0, this_x_testing)*p_y_0)/p_x(this_x_testing(1), this_x_testing(2));
         this_p_yx_1 = (pdf(p_xy_1, this_x_testing)*p_y_1)/p_x(this_x_testing(1), this_x_testing(2));
-
-%         this_p_yx_0 = (pdf(p_xy_0, this_x_testing)*.5)/p_x(this_x_testing(1), this_x_testing(2));
-%         this_p_yx_1 = (pdf(p_xy_1, this_x_testing)*.5)/p_x(this_x_testing(1), this_x_testing(2));
-
 %         this_normalizor = 1/(this_p_yx_0 + this_p_yx_1);
 %         this_p_yx_0 = this_p_yx_0*this_normalizor;
 %         this_p_yx_1 = this_p_yx_1*this_normalizor;
@@ -348,9 +342,9 @@ for row = 1:N_testing_P
         % Normalization
         this_p_yx_0 = (pdf(p_xy_0, this_x_testing)*p_y_0)/p_x(this_x_testing(1), this_x_testing(2));
         this_p_yx_1 = (pdf(p_xy_1, this_x_testing)*p_y_1)/p_x(this_x_testing(1), this_x_testing(2));
-
-%         this_p_yx_0 = (pdf(p_xy_0, this_x_testing)*.5)/p_x(this_x_testing(1), this_x_testing(2));
-%         this_p_yx_1 = (pdf(p_xy_1, this_x_testing)*.5)/p_x(this_x_testing(1), this_x_testing(2));
+%         this_normalizor = 1/(this_p_yx_0 + this_p_yx_1);
+%         this_p_yx_0 = this_p_yx_0*this_normalizor;
+%         this_p_yx_1 = this_p_yx_1*this_normalizor;
 
         if this_p_yx_0 >= this_p_yx_1
             % Decision 0
