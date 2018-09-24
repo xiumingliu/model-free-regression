@@ -2,10 +2,10 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures2'; 
+fpath = 'figures3'; 
 
 N_labeled = 100;    % Number of labeled training data 
-N_unlabeled = 900;  % Number of unlabeld training data
+N_unlabeled = 150;  % Number of unlabeld training data
 % N_testing = 50;     % Number of testing data
 
 NUM_SIM_DB = 10;
