@@ -2,18 +2,18 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures5'; 
+fpath = 'figures2'; 
 
 N_labeled = 100;    % Number of labeled training data 
 N_unlabeled = 900;  % Number of unlabeld training data
 N_testing = 50;     % Number of testing data
 
 NUM_SIM_DB = 10;
-NUM_SIM_DT = 5000;
-NUM_SIM_EP = 5000;
+NUM_SIM_DT = 500;
+NUM_SIM_EP = 500;
 
 D = 2;      % Dimension of the input X
-K = 50;     % Number of components used in GMM
+K = 10;     % Number of components used in GMM
 
 level_list = [0.001 .01 .1:.1:.9];
 
