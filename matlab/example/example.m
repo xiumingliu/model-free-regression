@@ -2,10 +2,10 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures5'; 
+fpath = 'figures6'; 
 
 N_labeled = 100;    % Number of labeled training data 
-N_unlabeled = 150;  % Number of unlabeld training data
+N_unlabeled = 0;  % Number of unlabeld training data
 % N_testing = 50;     % Number of testing data
 
 NUM_SIM_DB = 10;
@@ -38,7 +38,11 @@ saveas(gcf, fullfile(fpath, 'histogram.fig'));
 % X_0 = X_labeled(y_labeled == 0, :);
 % K = 2;
 
-p_y_unlabeled = length(y_unlabeled)/(length(y_labeled) + length(y_unlabeled));
+
+
+if N_unlabeled ~= 0
+p_y_unlabeled = length(y_unlabeled)/(length(y_labeled) + length(y_unlabeled));    
+    
 [~, model_xy_unlabled, ~] = mixGaussVb(X_unlabeled', K);
 this_Nk = sum(model_xy_unlabled.R);
 this_mu_hat = zeros(D, K);
@@ -70,6 +74,7 @@ ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_unlabeled.png'));
 saveas(gcf, fullfile(fpath, 'gmm_training_unlabeled.fig'));
+end
 
 %% The conditional distribution p(x | y = 0) and p(x | y = 1), using labeled data
 % p(x | y = 0)
@@ -77,8 +82,8 @@ saveas(gcf, fullfile(fpath, 'gmm_training_unlabeled.fig'));
 
 y_0 = y_labeled(y_labeled == 0);
 X_0 = X_labeled(y_labeled == 0, :);
-% p_y_0 = length(y_0)/(length(y_labeled) + length(y_unlabeled));
-p_y_0 = (length(y_labeled)/2)/(length(y_labeled) + length(y_unlabeled));
+p_y_0 = length(y_0)/(length(y_labeled) + length(y_unlabeled));
+% p_y_0 = (length(y_labeled)/2)/(length(y_labeled) + length(y_unlabeled));
 [~, model_xy_0, ~] = mixGaussVb(X_0', K);
 this_Nk = sum(model_xy_0.R);
 this_mu_hat = zeros(D, K);
@@ -97,8 +102,8 @@ p_xy_0 = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 % p(x | y = 1)
 y_1 = y_labeled(y_labeled == 1);
 X_1 = X_labeled(y_labeled == 1, :);
-% p_y_1 = length(y_1)/length(y);
-p_y_1 = (length(y_labeled)/2)/(length(y_labeled) + length(y_unlabeled));
+p_y_1 = length(y_1)/length(y);
+% p_y_1 = (length(y_labeled)/2)/(length(y_labeled) + length(y_unlabeled));
 [~, model_xy_1, ~] = mixGaussVb(X_1', K);
 this_N_k = sum(model_xy_1.R);
 this_mu_hat = zeros(D, K);
@@ -147,10 +152,15 @@ saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
 saveas(gcf, fullfile(fpath, 'gmm_training_1.fig'));
 
 %% The marginal distribution p(x), using both labeled and unlabeld data
+if N_unlabeled ~= 0
 p_x = @(x1, x2) (p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
     + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2])); 
+else
+p_x = @(x1, x2) (p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])); 
+end
 
 % Visualize p(x)
+if N_unlabeled ~= 0
 figure('position', [100, 100, 600, 600]); hold on;
 scatter(X_labeled((y_labeled==0),1), X_labeled((y_labeled==0),2), 100, 'or', 'LineWidth', 3);
 scatter(X_labeled((y_labeled==1),1), X_labeled((y_labeled==1),2), 100, 'xb', 'LineWidth', 3);
@@ -169,6 +179,22 @@ ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'gmm_training_marginal.png'));
 saveas(gcf, fullfile(fpath, 'gmm_training_marginal.fig'));
+else
+figure('position', [100, 100, 600, 600]); hold on;
+scatter(X_labeled((y_labeled==0),1), X_labeled((y_labeled==0),2), 100, 'or', 'LineWidth', 3);
+scatter(X_labeled((y_labeled==1),1), X_labeled((y_labeled==1),2), 100, 'xb', 'LineWidth', 3);
+legend('Labeled, class 0', 'Labeled, class 1', 'Location', 'southeast');
+% colorbar;
+colormap(jet);
+xlim([-5 5]);
+ylim([-5 5]);
+caxis([0 1]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'gmm_training_marginal.png'));
+saveas(gcf, fullfile(fpath, 'gmm_training_marginal.fig'));
+end
 
 %% Testing
 % y_predict = zeros(N_testing, 1);
@@ -184,33 +210,33 @@ saveas(gcf, fullfile(fpath, 'gmm_training_marginal.fig'));
 %     end
 % end
 
-figure('position', [100, 100, 600, 600]); 
-hold on;
-% scatter(X_testing((y_predict==0),1), X_testing((y_predict==0),2), 50, 'ok');
-% scatter(X_testing((y_predict==1),1), X_testing((y_predict==1),2), 50, 'xk');
-% scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 100, 'square', 'r', 'filled'); 
-scatter(X_labeled((y_labeled==0),1), X_labeled((y_labeled==0),2), 100, 'or', 'LineWidth', 3);
-scatter(X_labeled((y_labeled==1),1), X_labeled((y_labeled==1),2), 100, 'xb', 'LineWidth', 3);
-scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 's', 'LineWidth', 1,...
-    'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
-scatter(X_unlabeled((y_unlabeled==1), 1), X_unlabeled((y_unlabeled==1), 2), 50, 's', 'LineWidth', 1,...
-    'MarkerFaceColor','b','MarkerEdgeColor','b','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
-
-% fcontour(@(x1, x2)(pdf(p_xy_1, [x1, x2])/(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
-%     + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2]))*p_y_1 ...
-%     - pdf(p_xy_0, [x1, x2])/(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
-%     + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2]))*p_y_0), ...
+% figure('position', [100, 100, 600, 600]); 
+% hold on;
+% % scatter(X_testing((y_predict==0),1), X_testing((y_predict==0),2), 50, 'ok');
+% % scatter(X_testing((y_predict==1),1), X_testing((y_predict==1),2), 50, 'xk');
+% % scatter(X_testing(find(y_testing - y_predict), 1), X_testing(find(y_testing - y_predict), 2), 100, 'square', 'r', 'filled'); 
+% scatter(X_labeled((y_labeled==0),1), X_labeled((y_labeled==0),2), 100, 'or', 'LineWidth', 3);
+% scatter(X_labeled((y_labeled==1),1), X_labeled((y_labeled==1),2), 100, 'xb', 'LineWidth', 3);
+% scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 's', 'LineWidth', 1,...
+%     'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
+% scatter(X_unlabeled((y_unlabeled==1), 1), X_unlabeled((y_unlabeled==1), 2), 50, 's', 'LineWidth', 1,...
+%     'MarkerFaceColor','b','MarkerEdgeColor','b','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
+% 
+% % fcontour(@(x1, x2)(pdf(p_xy_1, [x1, x2])/(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
+% %     + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2]))*p_y_1 ...
+% %     - pdf(p_xy_0, [x1, x2])/(p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2])...
+% %     + p_y_unlabeled*pdf(p_xy_unlabeled, [x1 x2]))*p_y_0), ...
+% %     [-5 5 -5 5], '-k', 'LevelList', [0], 'LineWidth', 3)
+% fcontour(@(x1, x2)(pdf(p_xy_1, [x1, x2]) - pdf(p_xy_0, [x1, x2])), ...
 %     [-5 5 -5 5], '-k', 'LevelList', [0], 'LineWidth', 3)
-fcontour(@(x1, x2)(pdf(p_xy_1, [x1, x2]) - pdf(p_xy_0, [x1, x2])), ...
-    [-5 5 -5 5], '-k', 'LevelList', [0], 'LineWidth', 3)
-legend('Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', 'unlabeled, class 1', 'Decision boundaries', 'Location', 'southeast');
-xlim([-5 5]);
-ylim([-5 5]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'testing_decision.png'));
-saveas(gcf, fullfile(fpath, 'testing_decision.fig'));
+% legend('Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', 'unlabeled, class 1', 'Decision boundaries', 'Location', 'southeast');
+% xlim([-5 5]);
+% ylim([-5 5]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'testing_decision.png'));
+% saveas(gcf, fullfile(fpath, 'testing_decision.fig'));
 
 
 % figure('position', [100, 100, 600, 600]); 
@@ -381,7 +407,7 @@ saveas(gcf, fullfile(fpath, 'correct_probability.png'));
 saveas(gcf, fullfile(fpath, 'correct_probability.fig'));
 
 %% Monte Carlo Simulations
-run simulations_DT.m
+% run simulations_DT.m
 
 % run simulations_DB.m
 

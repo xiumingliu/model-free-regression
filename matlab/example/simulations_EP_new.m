@@ -60,6 +60,7 @@ this_pi_hat = (model_xy_1.alpha/sum(model_xy_1.alpha));
 this_p_xy_1 = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 
 % For p(x | y = u)
+if N_unlabeled ~= 0
 N_k = sum(model_xy_unlabled.R);
 
 this_mu = (model_xy_unlabled.m)';
@@ -85,11 +86,15 @@ end
 this_pi_hat = (model_xy_unlabled.alpha/sum(model_xy_unlabled.alpha));
 
 this_p_xy_unlabeled = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
+end
 
 % Marginal distribution p(x)
+if N_unlabeled ~= 0
 this_p_x = @(x1, x2) (p_y_0*pdf(this_p_xy_0, [x1 x2]) + p_y_1*pdf(this_p_xy_1, [x1 x2])...
     + p_y_unlabeled*pdf(this_p_xy_unlabeled, [x1 x2])); 
-
+else
+this_p_x = @(x1, x2) (p_y_0*pdf(this_p_xy_0, [x1 x2]) + p_y_1*pdf(this_p_xy_1, [x1 x2]));
+end
 %% Error probability
 for row = 1:N_testing_EP
     for col = 1:N_testing_EP
