@@ -54,7 +54,7 @@ scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 
     'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
 scatter(X_unlabeled((y_unlabeled==1), 1), X_unlabeled((y_unlabeled==1), 2), 50, 's', 'LineWidth', 1,...
     'MarkerFaceColor','b','MarkerEdgeColor','b','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
-legend({'Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', 'Unlabeled, class 1'}, 'Location', 'northoutside', 'Interpreter', 'latex');
+legend({'Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', 'unlabeled, class 1'}, 'Location', 'northoutside', 'Interpreter', 'latex');
 % colorbar;
 colormap(jet);
 xlim([-5 5]);
