@@ -357,8 +357,8 @@ toc
 figure('position', [100, 100, 600, 600]); % Scatter plot 
 hold on;
 contourf(X1_test_EP, X2_test_EP, y_predict_EP);
-xlim([-5 5]);
-ylim([-5 5]);
+xlim([-3.5 3.5]);
+ylim([-3.5 3.5]);
 colormap(jet)
 colorbar;
 caxis([0 .5]);
@@ -371,8 +371,8 @@ saveas(gcf, fullfile(fpath, 'error_probability.fig'));
 figure('position', [100, 100, 600, 600]); % Scatter plot 
 hold on;
 contourf(X1_test_EP, X2_test_EP, y_predict_P);
-xlim([-5 5]);
-ylim([-5 5]);
+xlim([-3.5 3.5]);
+ylim([-3.5 3.5]);
 colormap(jet)
 colorbar;
 caxis([.5 1]);
