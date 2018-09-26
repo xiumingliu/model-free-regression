@@ -194,7 +194,7 @@ saveas(gcf, fullfile(fpath, 'gmm_training_marginal.fig'));
 %% Posterior probability for unlabeled data
 % [X1_test_EP, X2_test_EP] = meshgrid(-5:.1:5);
 % N_testing_EP = length(X1_test_EP);
-alpha = 0.2;
+alpha = 0.001;
 
 tic
 y_predict = zeros(N_unlabeled, 1);
@@ -381,3 +381,42 @@ ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'success_probability.png'));
 saveas(gcf, fullfile(fpath, 'success_probability.fig'));
+
+%% The Example
+% MCAR
+% P(x | y = 1) 
+p_xy_1_mcar.m = p_x.mu(1, :);
+p_xy_1_mcar.cov = p_x.Sigma(:, :, 1);
+
+p_xy_0_mcar.m = p_x.mu(2, :);
+p_xy_0_mcar.cov = p_x.Sigma(:, :, 2);
+
+% Figure
+figure('position', [100, 100, 600, 600]);
+hold on
+scatter(X_labeled((y_labeled==0),1), X_labeled((y_labeled==0),2), 100, 'or', 'LineWidth', 3);
+scatter(X_labeled((y_labeled==1),1), X_labeled((y_labeled==1),2), 100, 'xb', 'LineWidth', 3);
+scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 's', 'LineWidth', 1,...
+    'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
+scatter(X_unlabeled((y_unlabeled==1), 1), X_unlabeled((y_unlabeled==1), 2), 50, 's', 'LineWidth', 1,...
+    'MarkerFaceColor','b','MarkerEdgeColor','b','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
+fcontour(@(x1, x2)(p_y_1*pdf(p_xy_1, [x1 x2]) - p_y_0*pdf(p_xy_0, [x1 x2])),...
+    [-5 5 -5 5], 'LevelList', [0], 'LineWidth', 3, 'LineStyle', '--')
+fcontour(@(x1, x2)(p_y_1*mvnpdf([x1 x2], p_xy_1_mcar.m, p_xy_1_mcar.cov) - ...
+    p_y_0*mvnpdf([x1 x2], p_xy_0_mcar.m, p_xy_0_mcar.cov)), [-5 5 -5 5], ...
+    'LevelList', [0], 'LineWidth', 3, 'LineStyle', ':')
+
+lgd = legend({'Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', ...
+    'Unlabeled, class 1', 'MAR Naive Bayesian', 'MCAR Naive Bayesian'}, ...
+    'Location', 'northoutside', 'Interpreter', 'latex');
+% colorbar;
+% colormap(jet);
+xlim([-5 5]);
+ylim([-5 5]);
+caxis([0 1]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'data.png'));
+saveas(gcf, fullfile(fpath, 'data.fig'));
+
