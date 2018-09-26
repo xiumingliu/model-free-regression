@@ -1,7 +1,7 @@
 %% Generate random inputs with a Gaussian mixture model
 %% x
-mu_x = [0 2; 0 -2];    % Mean vector 
-COV_x = cat(3, [1 0; 0 .5], [1 0; 0 .5]);   % Cov matrix
+mu_x = [0 2.5; 0 -2.5];    % Mean vector 
+COV_x = cat(3, [1.5 0; 0 .5], [1.5 0; 0 .5]);   % Cov matrix
 p = ones(1, 2)/2;       % Weights of components       
 gm = gmdistribution(mu_x, COV_x, p);    % GMM model for generating inputs
 
@@ -10,6 +10,8 @@ X = random(gm, N_labeled+N_unlabeled);
 else
 X = random(gm, 1000);     
 end
+
+% X = [-5 + 10*rand(1000, 1), -5 + 10*rand(1000, 1)]; 
 
 % Quadrant
 X_Q1 = X(((X(:, 1)>=0) & (X(:, 2)>=0)), :);

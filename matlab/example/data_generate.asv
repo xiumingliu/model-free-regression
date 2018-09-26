@@ -1,7 +1,7 @@
 %% Generate random inputs with a Gaussian mixture model
 %% x
 mu_x = [0 2; 0 -2];    % Mean vector 
-COV_x = cat(3, [1 0; 0 .5], [1 0; 0 .5]);   % Cov matrix
+COV_x = cat(3, [1.5 0; 0 .5], [1.5 0; 0 .5]);   % Cov matrix
 p = ones(1, 2)/2;       % Weights of components       
 gm = gmdistribution(mu_x, COV_x, p);    % GMM model for generating inputs
 
@@ -10,6 +10,8 @@ X = random(gm, N_labeled+N_unlabeled);
 else
 X = random(gm, 1000);     
 end
+
+X1 = -5 + 10*rand(1000)
 
 % Quadrant
 X_Q1 = X(((X(:, 1)>=0) & (X(:, 2)>=0)), :);
@@ -54,7 +56,7 @@ scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 
     'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
 scatter(X_unlabeled((y_unlabeled==1), 1), X_unlabeled((y_unlabeled==1), 2), 50, 's', 'LineWidth', 1,...
     'MarkerFaceColor','b','MarkerEdgeColor','b','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
-legend({'Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', 'unlabeled, class 1'}, 'Location', 'northoutside', 'Interpreter', 'latex');
+legend({'Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', 'Unlabeled, class 1'}, 'Location', 'northoutside', 'Interpreter', 'latex');
 % colorbar;
 colormap(jet);
 xlim([-5 5]);
