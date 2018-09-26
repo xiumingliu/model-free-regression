@@ -4,7 +4,7 @@ close all
 %% Setup 
 fpath = 'figures2'; 
 
-N_labeled = 100;    % Number of labeled training data 
+N_labeled = 200;    % Number of labeled training data 
 N_unlabeled = 1800;  % Number of unlabeld training data
 
 D = 2;      % Dimension of the input X
@@ -379,5 +379,5 @@ caxis([.5 1]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'error_probability.png'));
-saveas(gcf, fullfile(fpath, 'error_probability.fig'));
+saveas(gcf, fullfile(fpath, 'success_probability.png'));
+saveas(gcf, fullfile(fpath, 'success_probability.fig'));
