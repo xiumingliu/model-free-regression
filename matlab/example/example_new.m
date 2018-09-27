@@ -422,8 +422,26 @@ contour(X1_test_EP, X2_test_EP, y_predict_EP, 'LevelList', [0.2], 'LineWidth', 3
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'uncertainty2.png'));
-saveas(gcf, fullfile(fpath, 'uncertainty2.fig'));
+saveas(gcf, fullfile(fpath, 'uncertainty.png'));
+saveas(gcf, fullfile(fpath, 'uncertainty.fig'));
+
+figure('position', [100, 100, 600, 600]); % Scatter plot 
+hold on;
+scatter(X_unlabeled(y_predict == 0, 1), X_unlabeled(y_predict == 0, 2), 50,...
+    1 - y_uncertainty(y_predict == 0), 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
+scatter(X_unlabeled(y_predict == 1, 1), X_unlabeled(y_predict == 1, 2), 50,...
+    1 - y_uncertainty(y_predict == 1), 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
+xlim([-5 5]);
+ylim([-5 5]);
+colormap(jet)
+colorbar;
+caxis([.5 1]);
+contour(X1_test_EP, X2_test_EP, ones(size(X1_test_EP)) - y_predict_EP, 'LevelList', [0.8], 'LineWidth', 3, 'LineColor', 'k');
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'p_y_x.png'));
+saveas(gcf, fullfile(fpath, 'p_y_x.fig'));
 
 %% The Example
 % MCAR
