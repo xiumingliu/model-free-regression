@@ -2,10 +2,10 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures2'; 
+fpath = 'figures3'; 
 
-N_labeled = 200;    % Number of labeled training data 
-N_unlabeled = 1800;  % Number of unlabeld training data
+N_labeled = 100;    % Number of labeled training data 
+N_unlabeled = 2000;  % Number of unlabeld training data
 
 D = 2;      % Dimension of the input X
 K = 2;     % Number of components used in GMM
@@ -65,7 +65,7 @@ saveas(gcf, fullfile(fpath, 'histogram.fig'));
 
 %% The conditional distribution p(x | y = 0) and p(x | y = 1), using labeled data
 % p(x | y = 0)
-
+K = 1;
 y_0 = y_labeled(y_labeled == 0);
 X_0 = X_labeled(y_labeled == 0, :);
 p_y_0 = length(y_0)/(N_labeled+N_unlabeled);
@@ -85,7 +85,7 @@ this_pi_hat = (model_xy_0.alpha/sum(model_xy_0.alpha));
 p_xy_0 = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 
 % p(x | y = 1)
-
+K = 1;
 y_1 = y_labeled(y_labeled == 1);
 X_1 = X_labeled(y_labeled == 1, :);
 p_y_1 = length(y_1)/(N_labeled+N_unlabeled);
@@ -157,7 +157,7 @@ saveas(gcf, fullfile(fpath, 'gmm_training_1.fig'));
 % set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 % saveas(gcf, fullfile(fpath, 'gmm_training_marginal.png'));
 % saveas(gcf, fullfile(fpath, 'gmm_training_marginal.fig'));
-
+K = 5;
 [~, model_x, ~] = mixGaussVb(X', K);
 this_Nk = sum(model_x.R);
 this_mu_hat = zeros(D, K);
@@ -194,7 +194,7 @@ saveas(gcf, fullfile(fpath, 'gmm_training_marginal.fig'));
 %% Posterior probability for unlabeled data
 % [X1_test_EP, X2_test_EP] = meshgrid(-5:.1:5);
 % N_testing_EP = length(X1_test_EP);
-alpha = 0.001;
+alpha = 0.01;
 
 tic
 y_predict = zeros(N_unlabeled, 1);
@@ -251,6 +251,7 @@ saveas(gcf, fullfile(fpath, 'histogram_new.png'));
 saveas(gcf, fullfile(fpath, 'histogram_new.fig'));
 
 % p'(x | y = 0)
+K = 2;
 y_0 = [y_labeled(y_labeled == 0); y_predict(y_predict == 0)];
 X_0 = [X_labeled(y_labeled == 0, :); X_unlabeled(y_predict == 0, :)];
 p_y_0_new = length(y_0)/(N_labeled+N_unlabeled);
@@ -356,9 +357,12 @@ toc
 
 figure('position', [100, 100, 600, 600]); % Scatter plot 
 hold on;
-contourf(X1_test_EP, X2_test_EP, y_predict_EP);
-xlim([-3.5 3.5]);
-ylim([-3.5 3.5]);
+% contourf(X1_test_EP, X2_test_EP, y_predict_EP);
+imagesc(-5:.2:5, -5:.2:5, y_predict_EP);
+% xlim([-3.5 3.5]);
+% ylim([-3.5 3.5]);
+xlim([-5 5]);
+ylim([-5 5]);
 colormap(jet)
 colorbar;
 caxis([0 .5]);
@@ -382,6 +386,44 @@ set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'success_probability.png'));
 saveas(gcf, fullfile(fpath, 'success_probability.fig'));
 
+%% 
+tic
+y_uncertainty = zeros(N_unlabeled, 1);
+y_predict= zeros(N_unlabeled, 1); 
+for n = 1:N_unlabeled
+    
+        this_x_unlabeled = X_unlabeled(n, :);
+        this_p_yx_0 = (pdf(p_xy_0_new, this_x_unlabeled)*p_y_0_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
+        this_p_yx_1 = (pdf(p_xy_1_new, this_x_unlabeled)*p_y_1_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
+
+        if this_p_yx_0 >= this_p_yx_1
+            y_uncertainty(n) = 1 - this_p_yx_0;
+            y_predict(n) = 0;
+        else
+            y_uncertainty(n) = 1 - this_p_yx_1;
+            y_predict(n) = 1;
+        end
+
+end
+toc
+
+figure('position', [100, 100, 600, 600]); % Scatter plot 
+hold on;
+scatter(X_unlabeled(y_predict == 0, 1), X_unlabeled(y_predict == 0, 2), 50,...
+    y_uncertainty(y_predict == 0), 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
+scatter(X_unlabeled(y_predict == 1, 1), X_unlabeled(y_predict == 1, 2), 50,...
+    y_uncertainty(y_predict == 1), 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
+xlim([-5 5]);
+ylim([-5 5]);
+colormap(jet)
+colorbar;
+caxis([0 .5]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'uncertatinty.png'));
+saveas(gcf, fullfile(fpath, 'uncertatinty.fig'));
+
 %% The Example
 % MCAR
 % P(x | y = 1) 
@@ -392,14 +434,14 @@ p_xy_0_mcar.m = p_x.mu(2, :);
 p_xy_0_mcar.cov = p_x.Sigma(:, :, 2);
 
 % Figure
-figure('position', [100, 100, 600, 600]);
+figure('position', [100, 100, 900, 600]);
 hold on
+scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 'o', 'LineWidth', 3,...
+    'MarkerFaceColor','w','MarkerEdgeColor','k','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
+scatter(X_unlabeled((y_unlabeled==1), 1), X_unlabeled((y_unlabeled==1), 2), 50, 'x', 'LineWidth', 3,...
+    'MarkerFaceColor','k','MarkerEdgeColor','k','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
 scatter(X_labeled((y_labeled==0),1), X_labeled((y_labeled==0),2), 100, 'or', 'LineWidth', 3);
 scatter(X_labeled((y_labeled==1),1), X_labeled((y_labeled==1),2), 100, 'xb', 'LineWidth', 3);
-scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 's', 'LineWidth', 1,...
-    'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
-scatter(X_unlabeled((y_unlabeled==1), 1), X_unlabeled((y_unlabeled==1), 2), 50, 's', 'LineWidth', 1,...
-    'MarkerFaceColor','b','MarkerEdgeColor','b','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
 fcontour(@(x1, x2)(p_y_1*pdf(p_xy_1, [x1 x2]) - p_y_0*pdf(p_xy_0, [x1 x2])),...
     [-5 5 -5 5], 'LevelList', [0], 'LineWidth', 3, 'LineStyle', '--')
 fcontour(@(x1, x2)(p_y_1*mvnpdf([x1 x2], p_xy_1_mcar.m, p_xy_1_mcar.cov) - ...
@@ -407,8 +449,8 @@ fcontour(@(x1, x2)(p_y_1*mvnpdf([x1 x2], p_xy_1_mcar.m, p_xy_1_mcar.cov) - ...
     'LevelList', [0], 'LineWidth', 3, 'LineStyle', ':')
 
 lgd = legend({'Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', ...
-    'Unlabeled, class 1', 'MAR Naive Bayesian', 'MCAR Naive Bayesian'}, ...
-    'Location', 'northoutside', 'Interpreter', 'latex');
+    'Unlabeled, class 1', 'Naive Bayesian CC', 'Naive Bayesian SC'}, ...
+    'Location', 'westoutside', 'Interpreter', 'latex');
 % colorbar;
 % colormap(jet);
 xlim([-5 5]);
