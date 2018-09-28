@@ -453,7 +453,7 @@ p_xy_0_mcar.m = p_x.mu(2, :);
 p_xy_0_mcar.cov = p_x.Sigma(:, :, 2);
 
 % Figure
-figure('position', [100, 100, 900, 600]);
+figure('position', [100, 100, 950, 600]);
 hold on
 scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 'o', 'LineWidth', 3,...
     'MarkerFaceColor','w','MarkerEdgeColor','k','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
@@ -468,7 +468,7 @@ fcontour(@(x1, x2)(p_y_1*mvnpdf([x1 x2], p_xy_1_mcar.m, p_xy_1_mcar.cov) - ...
     'LevelList', [0], 'LineWidth', 3, 'LineStyle', ':', 'LineColor', 'k')
 
 lgd = legend({'Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', ...
-    'Unlabeled, class 1', 'Self Training (VBGMM)', 'Supervised (VBGMM)'}, ...
+    'Unlabeled, class 1', 'Supervised (VBGMM)', 'Semi-supervised (Self Training)'}, ...
     'Location', 'westoutside', 'Interpreter', 'latex');
 % colorbar;
 % colormap(jet);
