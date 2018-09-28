@@ -35,6 +35,13 @@ y_Q3 = y(((X(:, 1)<0) & (X(:, 2)<0)));
 y_Q4 = y(((X(:, 1)>=0) & (X(:, 2)<0)));
    
 %% Labeled and unlabeled
+mu_x = [2.5 2.5; -2.5 -2.5];    % Mean vector 
+COV_x = cat(3, [.5 0; 0 .5], [.5 0; 0 .5]);   % Cov matrix
+p = ones(1, 2)/2;       % Weights of components       
+gm = gmdistribution(mu_x, COV_x, p);    % GMM model for generating inputs
+
+X_labeled = random(gm, N_labeled); 
+
 
 
 X_labeled = [X_Q1(1:N_labeled/2, :); X_Q3(1:N_labeled/2, :)];
