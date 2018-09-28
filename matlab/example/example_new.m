@@ -502,7 +502,7 @@ contour(X1_test_EP_1, X2_test_EP_1, y_predict_EP_1, 'LevelList', [0.2], 'LineWid
 contour(X1_test_EP_2, X2_test_EP_2, y_predict_EP_2, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+set(gca, 'FontSize', 20, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'y_x_0.png'));
 saveas(gcf, fullfile(fpath, 'y_x_0.fig'));
 
@@ -516,7 +516,7 @@ p_xy_0_mcar.m = p_x.mu(2, :);
 p_xy_0_mcar.cov = p_x.Sigma(:, :, 2);
 
 % Figure
-figure('position', [100, 100, 950, 600]);
+figure('position', [100, 100, 1000, 600]);
 hold on
 scatter(X_unlabeled((y_unlabeled==0), 1), X_unlabeled((y_unlabeled==0), 2), 50, 'o', 'LineWidth', 3,...
     'MarkerFaceColor','w','MarkerEdgeColor','k','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
@@ -540,7 +540,7 @@ ylim([-5 5]);
 caxis([0 1]);
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+set(gca, 'FontSize', 20, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'data.png'));
 saveas(gcf, fullfile(fpath, 'data.fig'));
 
