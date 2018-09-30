@@ -2,7 +2,7 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures4'; 
+fpath = 'figures5'; 
 
 N_labeled = 200;    % Number of labeled training data 
 N_unlabeled = 5000;  % Number of unlabeld training data
