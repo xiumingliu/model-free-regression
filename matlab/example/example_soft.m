@@ -15,19 +15,6 @@ level_list = [0.001 .01 .1:.1:.9 .99 .999];
 %% Generate synthetic data
 run data_generate.m
 
-%% Histogram of outputs
-C = categorical([y_labeled; -1*ones(N_unlabeled, 1)], [0 1 -1],...
-    {'Class 0', 'Class 1', 'Unlabeled'});
-
-% figure('position', [100, 100, 600, 600]); % Marginal distribution of y
-% histogram(C)
-% ylim([0 2000]);
-% xlabel('$y$', 'Interpreter', 'latex');
-% ylabel('Histogram of $y$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'histogram.png'));
-% saveas(gcf, fullfile(fpath, 'histogram.fig'));
-
 %% The conditional distribution of unlabeled data 
 p_y_unlabeled = length(y_unlabeled)/(length(y_labeled) + length(y_unlabeled));    
     
@@ -65,7 +52,7 @@ saveas(gcf, fullfile(fpath, 'gmm_training_unlabeled.fig'));
 
 %% The conditional distribution p(x | y = 0) and p(x | y = 1), using labeled data
 % p(x | y = 0)
-K = 5;
+K = 1;
 y_0 = y_labeled(y_labeled == 0);
 X_0 = X_labeled(y_labeled == 0, :);
 p_y_0 = length(y_0)/(N_labeled+N_unlabeled);
@@ -85,7 +72,7 @@ this_pi_hat = (model_xy_0.alpha/sum(model_xy_0.alpha));
 p_xy_0 = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 
 % p(x | y = 1)
-K = 5;
+K = 1;
 y_1 = y_labeled(y_labeled == 1);
 X_1 = X_labeled(y_labeled == 1, :);
 p_y_1 = length(y_1)/(N_labeled+N_unlabeled);
@@ -156,7 +143,7 @@ hold on
 scatter(X(:, 1), X(:, 2), 50, 's', 'LineWidth', 1,...
     'MarkerFaceColor','k','MarkerEdgeColor','k','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
 fcontour(@(x1, x2)(pdf(p_x, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
-legend('Unlabeled', 'Location', 'southeast');
+legend('Marginal', 'Location', 'southeast');
 % colorbar;
 colormap(jet);
 xlim([-5 5]);
@@ -191,7 +178,7 @@ imagesc(-5:.1:5, -5:.1:5, y_LRT);
 % contour(-5:.1:5, -5:.1:5, y_LRT, 'LevelList', [0])
 xlim([-5 5]);
 ylim([-5 5]);
-colormap(jet)
+colormap(gray)
 colorbar;
 caxis([-1 1]);
 xlabel('$x_1$', 'Interpreter', 'latex');
@@ -275,7 +262,7 @@ saveas(gcf, fullfile(fpath, 'likelihood_hist.fig'));
 
 %% New probabilities
 % p'(x | y = 0)
-K = 2; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+K = 1; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 y_0 = y_labeled_augment(y_labeled_augment == 0);
 X_0 = X_labeled_augment(y_labeled_augment == 0, :);
 p_y_0_new = length(y_0)/(N_labeled+N_unlabeled);
@@ -345,7 +332,7 @@ saveas(gcf, fullfile(fpath, 'gmm_training_1_new.fig'));
 
 % p'(x | y = u)
 p_y_unlabeled_new = length(y_unlabeled_remain)/(length(y_labeled) + length(y_unlabeled));    
-K = 50;    
+K = 10;    
 [~, model_xy_unlabled, ~] = mixGaussVb(X_unlabeled_remain', K);
 this_Nk = sum(model_xy_unlabled.R);
 this_mu_hat = zeros(D, K);
@@ -380,168 +367,6 @@ saveas(gcf, fullfile(fpath, 'gmm_training_unlabeled.fig'));
 
 % % p'(x)
 p_x_new = @(x1, x2) (p_y_0_new*pdf(p_xy_0_new, [x1 x2]) + p_y_1_new*pdf(p_xy_1_new, [x1 x2]) + p_y_unlabeled_new*pdf(p_xy_unlabeled_new, [x1 x2])); 
-
-%% Error probability
-[X1_test_EP, X2_test_EP] = meshgrid(-5:.2:5);
-N_testing_EP = length(X1_test_EP);
-
-tic
-y_predict_EP = zeros(N_testing_EP, N_testing_EP); 
-
-y_predict_P = zeros(N_testing_EP, N_testing_EP); 
-for row = 1:N_testing_EP
-    for col = 1:N_testing_EP
-        this_x_testing = [X1_test_EP(row,col), X2_test_EP(row,col)];
-        this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        
-%         this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/pdf(p_x, this_x_testing);
-%         this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/pdf(p_x, this_x_testing);
-
-
-        if this_p_yx_0 >= this_p_yx_1
-            % Decision 0
-            y_predict_EP(row, col) = 1 - this_p_yx_0;
-            y_predict_P(row, col) = this_p_yx_0;
-%             y_predict_EP(row, col) = this_p_yx_1;
-        else
-            % Decision 1
-            y_predict_EP(row, col) = 1 - this_p_yx_1;
-            y_predict_P(row, col) = this_p_yx_1;
-%             y_predict_EP(row, col) = this_p_yx_0;
-        end
-    end
-end
-toc
-
-[X1_test_EP_1, X2_test_EP_1] = meshgrid(-5:.2:.2);
-N_testing_EP_1 = length(X1_test_EP_1);
-
-tic
-y_predict_EP_1 = zeros(N_testing_EP_1, N_testing_EP_1); 
-for row = 1:N_testing_EP_1
-    for col = 1:N_testing_EP_1
-        this_x_testing = [X1_test_EP_1(row,col), X2_test_EP_1(row,col)];
-        this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        
-        if this_p_yx_0 >= this_p_yx_1
-            % Decision 0
-            y_predict_EP_1(row, col) = 1 - this_p_yx_0;
-        else
-            % Decision 1
-            y_predict_EP_1(row, col) = 1 - this_p_yx_1;
-        end
-    end
-end
-toc
-
-[X1_test_EP_2, X2_test_EP_2] = meshgrid(-.2:.2:5);
-N_testing_EP_2 = length(X1_test_EP_2);
-
-tic
-y_predict_EP_2 = zeros(N_testing_EP_2, N_testing_EP_2); 
-for row = 1:N_testing_EP_2
-    for col = 1:N_testing_EP_2
-        this_x_testing = [X1_test_EP_2(row,col), X2_test_EP_2(row,col)];
-        this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        
-        if this_p_yx_0 >= this_p_yx_1
-            % Decision 0
-            y_predict_EP_2(row, col) = 1 - this_p_yx_0;
-        else
-            % Decision 1
-            y_predict_EP_2(row, col) = 1 - this_p_yx_1;
-        end
-    end
-end
-toc
-
-% figure('position', [100, 100, 600, 600]); % Scatter plot 
-% hold on;
-% % contourf(X1_test_EP, X2_test_EP, y_predict_EP);
-% imagesc(-5:.2:5, -5:.2:5, y_predict_EP);
-% % xlim([-3.5 3.5]);
-% % ylim([-3.5 3.5]);
-% xlim([-5 5]);
-% ylim([-5 5]);
-% colormap(jet)
-% colorbar;
-% caxis([0 .5]);
-% xlabel('$x_1$', 'Interpreter', 'latex');
-% ylabel('$x_2$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'error_probability.png'));
-% saveas(gcf, fullfile(fpath, 'error_probability.fig'));
-
-% figure('position', [100, 100, 600, 600]); % Scatter plot 
-% hold on;
-% contourf(X1_test_EP, X2_test_EP, y_predict_P);
-% xlim([-3.5 3.5]);
-% ylim([-3.5 3.5]);
-% colormap(jet)
-% colorbar;
-% caxis([.5 1]);
-% xlabel('$x_1$', 'Interpreter', 'latex');
-% ylabel('$x_2$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'success_probability.png'));
-% saveas(gcf, fullfile(fpath, 'success_probability.fig'));
-
-%% 
-tic
-y_uncertainty = zeros(N_unlabeled, 1);
-y_predict= zeros(N_unlabeled, 1); 
-y_x_0 = zeros(N_unlabeled, 1); 
-y_x_1 = zeros(N_unlabeled, 1); 
-for n = 1:N_unlabeled
-    
-        this_x_unlabeled = X_unlabeled(n, :);
-        this_p_yx_0 = (pdf(p_xy_0_new, this_x_unlabeled)*p_y_0_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
-        this_p_yx_1 = (pdf(p_xy_1_new, this_x_unlabeled)*p_y_1_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
-        y_x_0(n) = this_p_yx_0;
-        y_x_1(n) = this_p_yx_1;
-        if this_p_yx_0 >= this_p_yx_1
-            y_uncertainty(n) = 1 - this_p_yx_0;
-            y_predict(n) = 0;
-        else
-            y_uncertainty(n) = 1 - this_p_yx_1;
-            y_predict(n) = 1;
-        end
-
-end
-toc
-
-figure('position', [100, 100, 600, 600]); % Scatter plot 
-hold on;
-scatter(X_unlabeled(:, 1), X_unlabeled(:, 2), 50,...
-    y_x_0, 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
-xlim([-5 5]);
-ylim([-5 5]);
-colormap(jet)
-colorbar;
-caxis([0 1]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 20, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'p_y0_x.png'));
-saveas(gcf, fullfile(fpath, 'p_y0_x_0.fig'));
-
-figure('position', [100, 100, 600, 600]); % Scatter plot 
-hold on;
-scatter(X_unlabeled(:, 1), X_unlabeled(:, 2), 50,...
-    y_x_1, 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
-xlim([-5 5]);
-ylim([-5 5]);
-colormap(jet)
-colorbar;
-caxis([0 1]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 20, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'p_y1_x.png'));
-saveas(gcf, fullfile(fpath, 'p_y1_x_0.fig'));
 
 %% The Example
 % MCAR
@@ -583,3 +408,80 @@ set(gca, 'FontSize', 20, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'data.png'));
 saveas(gcf, fullfile(fpath, 'data.fig'));
 
+%% testing
+
+tic
+y_uncertainty = zeros(N_unlabeled, 1);
+y_predict= zeros(N_unlabeled, 1); 
+p_y0_x = zeros(N_unlabeled, 1); 
+for n = 1:N_unlabeled
+    
+        this_x_unlabeled = X_unlabeled(n, :);
+        this_p_yx_0 = (pdf(p_xy_0_new, this_x_unlabeled)*p_y_0_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
+        this_p_yx_1 = (pdf(p_xy_1_new, this_x_unlabeled)*p_y_1_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
+        this_p_yx_unlabeled = (pdf(p_xy_unlabeled_new, this_x_unlabeled)*p_y_unlabeled_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
+        p_y0_x(n) = this_p_yx_0 + this_p_yx_unlabeled*.5;
+
+end
+toc
+
+[X1_test_EP_1, X2_test_EP_1] = meshgrid(-5:.2:.2);
+N_testing_EP_1 = length(X1_test_EP_1);
+
+tic
+y_predict_EP_1 = zeros(N_testing_EP_1, N_testing_EP_1); 
+for row = 1:N_testing_EP_1
+    for col = 1:N_testing_EP_1
+        this_x_testing = [X1_test_EP_1(row,col), X2_test_EP_1(row,col)];
+        this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+        this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+        this_p_yx_unlabeled = (pdf(p_xy_unlabeled_new, this_x_unlabeled)*p_y_unlabeled_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
+        if this_p_yx_0 >= this_p_yx_1
+            % Decision 0
+            y_predict_EP_1(row, col) = 1 - this_p_yx_0 - .5*this_p_yx_unlabeled;
+        else
+            % Decision 1
+            y_predict_EP_1(row, col) = 1 - this_p_yx_1 - .5*this_p_yx_unlabeled;
+        end
+    end
+end
+toc
+
+[X1_test_EP_2, X2_test_EP_2] = meshgrid(-.2:.2:5);
+N_testing_EP_2 = length(X1_test_EP_2);
+
+tic
+y_predict_EP_2 = zeros(N_testing_EP_2, N_testing_EP_2); 
+for row = 1:N_testing_EP_2
+    for col = 1:N_testing_EP_2
+        this_x_testing = [X1_test_EP_2(row,col), X2_test_EP_2(row,col)];
+        this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+        this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+        this_p_yx_unlabeled = (pdf(p_xy_unlabeled_new, this_x_unlabeled)*p_y_unlabeled_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
+        if this_p_yx_0 >= this_p_yx_1
+            % Decision 0
+            y_predict_EP_2(row, col) = 1 - this_p_yx_0 - .5*this_p_yx_unlabeled;
+        else
+            % Decision 1
+            y_predict_EP_2(row, col) = 1 - this_p_yx_1 - .5*this_p_yx_unlabeled;
+        end
+    end
+end
+toc
+
+figure('position', [100, 100, 600, 600]); % Scatter plot 
+hold on;
+scatter(X_unlabeled(:, 1), X_unlabeled(:, 2), 50,...
+    p_y0_x, 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
+% contour(X1_test_EP_1, X2_test_EP_1, y_predict_EP_1, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
+% contour(X1_test_EP_2, X2_test_EP_2, y_predict_EP_2, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
+xlim([-5 5]);
+ylim([-5 5]);
+colormap(jet)
+colorbar;
+caxis([0 1]);
+xlabel('$x_1$', 'Interpreter', 'latex');
+ylabel('$x_2$', 'Interpreter', 'latex');
+set(gca, 'FontSize', 20, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'p_y0_x.png'));
+saveas(gcf, fullfile(fpath, 'p_y0_x.fig'));

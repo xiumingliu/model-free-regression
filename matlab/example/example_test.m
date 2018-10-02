@@ -2,7 +2,7 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures5'; 
+fpath = 'figures6'; 
 
 N_labeled = 200;    % Number of labeled training data 
 N_unlabeled = 3000;  % Number of unlabeld training data
@@ -455,37 +455,6 @@ for row = 1:N_testing_EP_2
 end
 toc
 
-% figure('position', [100, 100, 600, 600]); % Scatter plot 
-% hold on;
-% % contourf(X1_test_EP, X2_test_EP, y_predict_EP);
-% imagesc(-5:.2:5, -5:.2:5, y_predict_EP);
-% % xlim([-3.5 3.5]);
-% % ylim([-3.5 3.5]);
-% xlim([-5 5]);
-% ylim([-5 5]);
-% colormap(jet)
-% colorbar;
-% caxis([0 .5]);
-% xlabel('$x_1$', 'Interpreter', 'latex');
-% ylabel('$x_2$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'error_probability.png'));
-% saveas(gcf, fullfile(fpath, 'error_probability.fig'));
-
-% figure('position', [100, 100, 600, 600]); % Scatter plot 
-% hold on;
-% contourf(X1_test_EP, X2_test_EP, y_predict_P);
-% xlim([-3.5 3.5]);
-% ylim([-3.5 3.5]);
-% colormap(jet)
-% colorbar;
-% caxis([.5 1]);
-% xlabel('$x_1$', 'Interpreter', 'latex');
-% ylabel('$x_2$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'success_probability.png'));
-% saveas(gcf, fullfile(fpath, 'success_probability.fig'));
-
 %% 
 tic
 y_uncertainty = zeros(N_unlabeled, 1);
@@ -508,42 +477,6 @@ for n = 1:N_unlabeled
 end
 toc
 
-% figure('position', [100, 100, 600, 600]); % Scatter plot 
-% hold on;
-% scatter(X_unlabeled(y_predict == 0, 1), X_unlabeled(y_predict == 0, 2), 50,...
-%     y_uncertainty(y_predict == 0), 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
-% scatter(X_unlabeled(y_predict == 1, 1), X_unlabeled(y_predict == 1, 2), 50,...
-%     y_uncertainty(y_predict == 1), 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
-% xlim([-5 5]);
-% ylim([-5 5]);
-% colormap(jet)
-% colorbar;
-% caxis([0 .5]);
-% contour(X1_test_EP, X2_test_EP, y_predict_EP, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
-% xlabel('$x_1$', 'Interpreter', 'latex');
-% ylabel('$x_2$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'uncertainty.png'));
-% saveas(gcf, fullfile(fpath, 'uncertainty.fig'));
-
-% figure('position', [100, 100, 600, 600]); % Scatter plot 
-% hold on;
-% scatter(X_unlabeled(y_predict == 0, 1), X_unlabeled(y_predict == 0, 2), 50,...
-%     1 - y_uncertainty(y_predict == 0), 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
-% scatter(X_unlabeled(y_predict == 1, 1), X_unlabeled(y_predict == 1, 2), 50,...
-%     1 - y_uncertainty(y_predict == 1), 'filled', 'o', 'LineWidth', 3, 'MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
-% xlim([-5 5]);
-% ylim([-5 5]);
-% colormap(jet)
-% colorbar;
-% caxis([.5 1]);
-% contour(X1_test_EP, X2_test_EP, ones(size(X1_test_EP)) - y_predict_EP, 'LevelList', [0.8], 'LineWidth', 3, 'LineColor', 'k');
-% xlabel('$x_1$', 'Interpreter', 'latex');
-% ylabel('$x_2$', 'Interpreter', 'latex');
-% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-% saveas(gcf, fullfile(fpath, 'p_y_x.png'));
-% saveas(gcf, fullfile(fpath, 'p_y_x.fig'));
-
 figure('position', [100, 100, 600, 600]); % Scatter plot 
 hold on;
 scatter(X_unlabeled(:, 1), X_unlabeled(:, 2), 50,...
@@ -560,8 +493,8 @@ contour(X1_test_EP_2, X2_test_EP_2, y_predict_EP_2, 'LevelList', [0.2], 'LineWid
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 20, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'y_x_0.png'));
-saveas(gcf, fullfile(fpath, 'y_x_0.fig'));
+saveas(gcf, fullfile(fpath, 'p_y0_x.png'));
+saveas(gcf, fullfile(fpath, 'p_y0_x.fig'));
 
 %% The Example
 % MCAR
