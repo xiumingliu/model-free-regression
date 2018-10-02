@@ -411,49 +411,49 @@ for row = 1:N_testing_EP
 end
 toc
 
-[X1_test_EP_1, X2_test_EP_1] = meshgrid(-5:.2:.2);
-N_testing_EP_1 = length(X1_test_EP_1);
-
-tic
-y_predict_EP_1 = zeros(N_testing_EP_1, N_testing_EP_1); 
-for row = 1:N_testing_EP_1
-    for col = 1:N_testing_EP_1
-        this_x_testing = [X1_test_EP_1(row,col), X2_test_EP_1(row,col)];
-        this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        
-        if this_p_yx_0 >= this_p_yx_1
-            % Decision 0
-            y_predict_EP_1(row, col) = 1 - this_p_yx_0;
-        else
-            % Decision 1
-            y_predict_EP_1(row, col) = 1 - this_p_yx_1;
-        end
-    end
-end
-toc
-
-[X1_test_EP_2, X2_test_EP_2] = meshgrid(-.2:.2:5);
-N_testing_EP_2 = length(X1_test_EP_2);
-
-tic
-y_predict_EP_2 = zeros(N_testing_EP_2, N_testing_EP_2); 
-for row = 1:N_testing_EP_2
-    for col = 1:N_testing_EP_2
-        this_x_testing = [X1_test_EP_2(row,col), X2_test_EP_2(row,col)];
-        this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        
-        if this_p_yx_0 >= this_p_yx_1
-            % Decision 0
-            y_predict_EP_2(row, col) = 1 - this_p_yx_0;
-        else
-            % Decision 1
-            y_predict_EP_2(row, col) = 1 - this_p_yx_1;
-        end
-    end
-end
-toc
+% [X1_test_EP_1, X2_test_EP_1] = meshgrid(-5:.2:.2);
+% N_testing_EP_1 = length(X1_test_EP_1);
+% 
+% tic
+% y_predict_EP_1 = zeros(N_testing_EP_1, N_testing_EP_1); 
+% for row = 1:N_testing_EP_1
+%     for col = 1:N_testing_EP_1
+%         this_x_testing = [X1_test_EP_1(row,col), X2_test_EP_1(row,col)];
+%         this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+%         this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+%         
+%         if this_p_yx_0 >= this_p_yx_1
+%             % Decision 0
+%             y_predict_EP_1(row, col) = 1 - this_p_yx_0;
+%         else
+%             % Decision 1
+%             y_predict_EP_1(row, col) = 1 - this_p_yx_1;
+%         end
+%     end
+% end
+% toc
+% 
+% [X1_test_EP_2, X2_test_EP_2] = meshgrid(-.2:.2:5);
+% N_testing_EP_2 = length(X1_test_EP_2);
+% 
+% tic
+% y_predict_EP_2 = zeros(N_testing_EP_2, N_testing_EP_2); 
+% for row = 1:N_testing_EP_2
+%     for col = 1:N_testing_EP_2
+%         this_x_testing = [X1_test_EP_2(row,col), X2_test_EP_2(row,col)];
+%         this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+%         this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+%         
+%         if this_p_yx_0 >= this_p_yx_1
+%             % Decision 0
+%             y_predict_EP_2(row, col) = 1 - this_p_yx_0;
+%         else
+%             % Decision 1
+%             y_predict_EP_2(row, col) = 1 - this_p_yx_1;
+%         end
+%     end
+% end
+% toc
 
 % figure('position', [100, 100, 600, 600]); % Scatter plot 
 % hold on;
@@ -554,9 +554,8 @@ colormap(jet)
 colorbar;
 caxis([0 1]);
 % contour(X1_test_EP, X2_test_EP, ones(size(X1_test_EP)) - y_predict_EP, 'LevelList', [0.9], 'LineWidth', 3, 'LineColor', 'k');
-% contour(X1_test_EP, X2_test_EP, y_predict_EP, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
-contour(X1_test_EP_1, X2_test_EP_1, y_predict_EP_1, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
-contour(X1_test_EP_2, X2_test_EP_2, y_predict_EP_2, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
+contour(X1_test_EP, X2_test_EP, y_predict_EP, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
+% contour(X1_test_EP_2, X2_test_EP_2, y_predict_EP_2, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 20, 'FontWeight', 'bold')
@@ -587,10 +586,10 @@ fcontour(@(x1, x2)(p_y_1*mvnpdf([x1 x2], p_xy_1_mcar.m, p_xy_1_mcar.cov) - ...
     p_y_0*mvnpdf([x1 x2], p_xy_0_mcar.m, p_xy_0_mcar.cov)), [-5 5 -5 5], ...
     'LevelList', [0], 'LineWidth', 3, 'LineStyle', ':', 'LineColor', 'k')
 
-plot(zeros(length(-5:.1:5), 1), -5:.1:5, '-k', 'LineWidth', 3);
+plot(ze)
 
 lgd = legend({'Labeled, class 0', 'Labeled, class 1', 'Unlabeled, class 0', ...
-    'Unlabeled, class 1', 'Supervised (VB-GMM)', 'Semi-supervised (Self Training)', 'True boundary'}, ...
+    'Unlabeled, class 1', 'Supervised (VB-GMM)', 'Semi-supervised (Self Training)'}, ...
     'Location', 'westoutside', 'Interpreter', 'latex');
 % colorbar;
 % colormap(jet);
