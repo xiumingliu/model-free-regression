@@ -2,7 +2,7 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures6'; 
+fpath = 'figures7'; 
 
 N_labeled = 200;    % Number of labeled training data 
 N_unlabeled = 3000;  % Number of unlabeld training data
@@ -262,7 +262,7 @@ saveas(gcf, fullfile(fpath, 'likelihood_hist.fig'));
 
 %% New probabilities
 % p'(x | y = 0)
-K = 1; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+K = 10; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 y_0 = y_labeled_augment(y_labeled_augment == 0);
 X_0 = X_labeled_augment(y_labeled_augment == 0, :);
 p_y_0_new = length(y_0)/(N_labeled+N_unlabeled);
@@ -332,7 +332,7 @@ saveas(gcf, fullfile(fpath, 'gmm_training_1_new.fig'));
 
 % p'(x | y = u)
 p_y_unlabeled_new = length(y_unlabeled_remain)/(length(y_labeled) + length(y_unlabeled));    
-K = 10;    
+K = 30;    
 [~, model_xy_unlabled, ~] = mixGaussVb(X_unlabeled_remain', K);
 this_Nk = sum(model_xy_unlabled.R);
 this_mu_hat = zeros(D, K);
@@ -425,49 +425,49 @@ for n = 1:N_unlabeled
 end
 toc
 
-[X1_test_EP_1, X2_test_EP_1] = meshgrid(-5:.2:.2);
-N_testing_EP_1 = length(X1_test_EP_1);
-
-tic
-y_predict_EP_1 = zeros(N_testing_EP_1, N_testing_EP_1); 
-for row = 1:N_testing_EP_1
-    for col = 1:N_testing_EP_1
-        this_x_testing = [X1_test_EP_1(row,col), X2_test_EP_1(row,col)];
-        this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        this_p_yx_unlabeled = (pdf(p_xy_unlabeled_new, this_x_unlabeled)*p_y_unlabeled_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
-        if this_p_yx_0 >= this_p_yx_1
-            % Decision 0
-            y_predict_EP_1(row, col) = 1 - this_p_yx_0 - .5*this_p_yx_unlabeled;
-        else
-            % Decision 1
-            y_predict_EP_1(row, col) = 1 - this_p_yx_1 - .5*this_p_yx_unlabeled;
-        end
-    end
-end
-toc
-
-[X1_test_EP_2, X2_test_EP_2] = meshgrid(-.2:.2:5);
-N_testing_EP_2 = length(X1_test_EP_2);
-
-tic
-y_predict_EP_2 = zeros(N_testing_EP_2, N_testing_EP_2); 
-for row = 1:N_testing_EP_2
-    for col = 1:N_testing_EP_2
-        this_x_testing = [X1_test_EP_2(row,col), X2_test_EP_2(row,col)];
-        this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
-        this_p_yx_unlabeled = (pdf(p_xy_unlabeled_new, this_x_unlabeled)*p_y_unlabeled_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
-        if this_p_yx_0 >= this_p_yx_1
-            % Decision 0
-            y_predict_EP_2(row, col) = 1 - this_p_yx_0 - .5*this_p_yx_unlabeled;
-        else
-            % Decision 1
-            y_predict_EP_2(row, col) = 1 - this_p_yx_1 - .5*this_p_yx_unlabeled;
-        end
-    end
-end
-toc
+% [X1_test_EP_1, X2_test_EP_1] = meshgrid(-5:.2:.2);
+% N_testing_EP_1 = length(X1_test_EP_1);
+% 
+% tic
+% y_predict_EP_1 = zeros(N_testing_EP_1, N_testing_EP_1); 
+% for row = 1:N_testing_EP_1
+%     for col = 1:N_testing_EP_1
+%         this_x_testing = [X1_test_EP_1(row,col), X2_test_EP_1(row,col)];
+%         this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+%         this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+%         this_p_yx_unlabeled = (pdf(p_xy_unlabeled_new, this_x_unlabeled)*p_y_unlabeled_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
+%         if this_p_yx_0 >= this_p_yx_1
+%             % Decision 0
+%             y_predict_EP_1(row, col) = 1 - this_p_yx_0 - .5*this_p_yx_unlabeled;
+%         else
+%             % Decision 1
+%             y_predict_EP_1(row, col) = 1 - this_p_yx_1 - .5*this_p_yx_unlabeled;
+%         end
+%     end
+% end
+% toc
+% 
+% [X1_test_EP_2, X2_test_EP_2] = meshgrid(-.2:.2:5);
+% N_testing_EP_2 = length(X1_test_EP_2);
+% 
+% tic
+% y_predict_EP_2 = zeros(N_testing_EP_2, N_testing_EP_2); 
+% for row = 1:N_testing_EP_2
+%     for col = 1:N_testing_EP_2
+%         this_x_testing = [X1_test_EP_2(row,col), X2_test_EP_2(row,col)];
+%         this_p_yx_0 = (pdf(p_xy_0_new, this_x_testing)*p_y_0_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+%         this_p_yx_1 = (pdf(p_xy_1_new, this_x_testing)*p_y_1_new)/p_x_new(this_x_testing(1), this_x_testing(2));
+%         this_p_yx_unlabeled = (pdf(p_xy_unlabeled_new, this_x_unlabeled)*p_y_unlabeled_new)/p_x_new(this_x_unlabeled(1), this_x_unlabeled(2));
+%         if this_p_yx_0 >= this_p_yx_1
+%             % Decision 0
+%             y_predict_EP_2(row, col) = 1 - this_p_yx_0 - .5*this_p_yx_unlabeled;
+%         else
+%             % Decision 1
+%             y_predict_EP_2(row, col) = 1 - this_p_yx_1 - .5*this_p_yx_unlabeled;
+%         end
+%     end
+% end
+% toc
 
 figure('position', [100, 100, 600, 600]); % Scatter plot 
 hold on;
