@@ -246,6 +246,7 @@ for row = 0:9
     end
 end
 confusion_matrix_robust = confusion_matrix_robust/(size_testing - num_adversarial_testing(1));
+sum(confusion_matrix_robust, 1)
 
 figure; 
 heatmap({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, ...

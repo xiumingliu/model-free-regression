@@ -1,56 +1,3 @@
-%% Parameters
-kappa = 3;
-K = 1;
-
-% %% p(x)
-% [~, model_x, ~] = mixBernEm(reshape(data_training, 28^2, size_training*10), K);
-% 
-% %% p(x | l = 0)
-%  
-% [~, model_x_u, ~] = mixBernEm(reshape(data_unlabeled, 28^2, num_unlabeled*10), K);
-% 
-% %% p(x | l = 1)
-% % K = 10;
-% [~, model_x_l, ~] = mixBernEm(reshape(data_labeled, 28^2, num_labeled*10), K);
-% 
-% %% p(x | y, l = 1)
-% 
-% [~, model_x_0, ~] = mixBernEm(reshape(data_labeled(:, :, 1), 28^2, num_labeled), K);
-% [~, model_x_1, ~] = mixBernEm(reshape(data_labeled(:, :, 2), 28^2, num_labeled), K);
-% [~, model_x_2, ~] = mixBernEm(reshape(data_labeled(:, :, 3), 28^2, num_labeled), K);
-% [~, model_x_3, ~] = mixBernEm(reshape(data_labeled(:, :, 4), 28^2, num_labeled), K);
-% [~, model_x_4, ~] = mixBernEm(reshape(data_labeled(:, :, 5), 28^2, num_labeled), K);
-% [~, model_x_5, ~] = mixBernEm(reshape(data_labeled(:, :, 6), 28^2, num_labeled), K);
-% [~, model_x_6, ~] = mixBernEm(reshape(data_labeled(:, :, 7), 28^2, num_labeled), K);
-% [~, model_x_7, ~] = mixBernEm(reshape(data_labeled(:, :, 8), 28^2, num_labeled), K);
-% [~, model_x_8, ~] = mixBernEm(reshape(data_labeled(:, :, 9), 28^2, num_labeled), K);
-% [~, model_x_9, ~] = mixBernEm(reshape(data_labeled(:, :, 10), 28^2, num_labeled), K);
-
-% %% LRT, p(x | l = 0) v.s. p(x | l = 1), for unlabeled data
-% 
-% LLR_unlabeled = zeros(num_unlabeled, 10); 
-% 
-% for y = 0:9
-% for i = 1:num_unlabeled
-%     this_data = data_unlabeled(:, i, y+1); 
-%     LLR_unlabeled(i, y+1) = log(bmpdf(this_data, K, model_x_u.mu, model_x_u.w))-...
-%         log(bmpdf(this_data, K, model_x_l.mu, model_x_l.w)); 
-%     if isnan(LLR_unlabeled(i, y+1))
-%         LLR_unlabeled(i, y+1) = kappa; 
-%     end
-% end
-% end
-% 
-% % Number of positive log likelihood ratios
-% num_postivie_lrt = zeros(10, 1); 
-% for y = 0:9
-%     this_lrt = LLR_unlabeled(:, y+1);
-%     num_postivie_lrt(y+1) = sum(this_lrt >=kappa); 
-% end
-% num_negative_lrt = num_unlabeled*ones(10, 1) - num_postivie_lrt;
-
-
-
 %% Assign y_hat = argmax p(y | x) for unlabeled x inside the region
 
 p_y_x_unlabeled_self = zeros(10, num_unlabeled, 10);
@@ -209,49 +156,62 @@ p_x_new_self = @(this_data) (p_y_0_self*bmpdf(this_data, K, model_x_0_new_self.m
     p_y_6_self*bmpdf(this_data, K, model_x_6_new_self.mu, model_x_6_new_self.w)+...
     p_y_7_self*bmpdf(this_data, K, model_x_7_new_self.mu, model_x_7_new_self.w)+...
     p_y_8_self*bmpdf(this_data, K, model_x_8_new_self.mu, model_x_8_new_self.w)+...
-    p_y_9_self*bmpdf(this_data, K, model_x_9_new_self.mu, model_x_9_new_self.w)+...
-    p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w));
+    p_y_9_self*bmpdf(this_data, K, model_x_9_new_self.mu, model_x_9_new_self.w));
 
 
 %% Test
 
 p_y_x_testing_self = zeros(10, size_testing, 10);
-p_y_x_max_ = zeros(size_testing, 10);
-yhat_x_testing = zeros(size_testing, 10);
+p_y_x_max_self = zeros(size_testing, 10);
+yhat_x_testing_self = zeros(size_testing, 10);
 for y = 0:9
     for i = 1:size_testing
         this_data = data_testing(:, i, y+1);   
 
-        p_y_x_testing_self(1, i, y+1) = (p_y_0_self*bmpdf(this_data, K, model_x_0_new_self.mu, model_x_0_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);
-        p_y_x_testing_self(2, i, y+1) = (p_y_1_self*bmpdf(this_data, K, model_x_1_new_self.mu, model_x_1_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);
-        p_y_x_testing_self(3, i, y+1) = (p_y_2_self*bmpdf(this_data, K, model_x_2_new_self.mu, model_x_2_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);
-        p_y_x_testing_self(4, i, y+1) = (p_y_3_self*bmpdf(this_data, K, model_x_3_new_self.mu, model_x_3_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);
-        p_y_x_testing_self(5, i, y+1) = (p_y_4_self*bmpdf(this_data, K, model_x_4_new_self.mu, model_x_4_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);
-        p_y_x_testing_self(6, i, y+1) = (p_y_5_self*bmpdf(this_data, K, model_x_5_new_self.mu, model_x_5_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);
-        p_y_x_testing_self(7, i, y+1) = (p_y_6_self*bmpdf(this_data, K, model_x_6_new_self.mu, model_x_6_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);
-        p_y_x_testing_self(8, i, y+1) = (p_y_7_self*bmpdf(this_data, K, model_x_7_new_self.mu, model_x_7_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);
-        p_y_x_testing_self(9, i, y+1) = (p_y_8_self*bmpdf(this_data, K, model_x_8_new_self.mu, model_x_8_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);
-        p_y_x_testing_self(10, i, y+1) = (p_y_9_self*bmpdf(this_data, K, model_x_9_new_self.mu, model_x_9_new_self.w)+.1*p_y_u_self*bmpdf(this_data, K, model_x_u_new_self.mu, model_x_u_new_self.w))/p_x_new_self(this_data);  
+        p_y_x_testing_self(1, i, y+1) = (p_y_0_self*bmpdf(this_data, K, model_x_0_new_self.mu, model_x_0_new_self.w))/p_x_new_self(this_data);
+        p_y_x_testing_self(2, i, y+1) = (p_y_1_self*bmpdf(this_data, K, model_x_1_new_self.mu, model_x_1_new_self.w))/p_x_new_self(this_data);
+        p_y_x_testing_self(3, i, y+1) = (p_y_2_self*bmpdf(this_data, K, model_x_2_new_self.mu, model_x_2_new_self.w))/p_x_new_self(this_data);
+        p_y_x_testing_self(4, i, y+1) = (p_y_3_self*bmpdf(this_data, K, model_x_3_new_self.mu, model_x_3_new_self.w))/p_x_new_self(this_data);
+        p_y_x_testing_self(5, i, y+1) = (p_y_4_self*bmpdf(this_data, K, model_x_4_new_self.mu, model_x_4_new_self.w))/p_x_new_self(this_data);
+        p_y_x_testing_self(6, i, y+1) = (p_y_5_self*bmpdf(this_data, K, model_x_5_new_self.mu, model_x_5_new_self.w))/p_x_new_self(this_data);
+        p_y_x_testing_self(7, i, y+1) = (p_y_6_self*bmpdf(this_data, K, model_x_6_new_self.mu, model_x_6_new_self.w))/p_x_new_self(this_data);
+        p_y_x_testing_self(8, i, y+1) = (p_y_7_self*bmpdf(this_data, K, model_x_7_new_self.mu, model_x_7_new_self.w))/p_x_new_self(this_data);
+        p_y_x_testing_self(9, i, y+1) = (p_y_8_self*bmpdf(this_data, K, model_x_8_new_self.mu, model_x_8_new_self.w))/p_x_new_self(this_data);
+        p_y_x_testing_self(10, i, y+1) = (p_y_9_self*bmpdf(this_data, K, model_x_9_new_self.mu, model_x_9_new_self.w))/p_x_new_self(this_data);  
 
         [~, index] = max(p_y_x_testing_self(:, i, y+1));
-        yhat_x_testing(i, y+1) = index-1;
+        yhat_x_testing_self(i, y+1) = index-1;
         
-        p_y_x_max(i, y+1) = max(p_y_x_testing_self(:, i, y+1));
+        p_y_x_max_self(i, y+1) = max(p_y_x_testing_self(:, i, y+1));
     end
 end
 
 % Number of errors 
-num_error_testing = zeros(10, 1); 
+num_error_testing_self = zeros(10, 1); 
 for y = 0:9
     for i = 1:size_testing
-        if yhat_x_testing(i, y+1) ~= y
-            num_error_testing(y+1) = num_error_testing(y+1) + 1;
+        if yhat_x_testing_self(i, y+1) ~= y
+            num_error_testing_self(y+1) = num_error_testing_self(y+1) + 1;
         end
     end
 end
-percentage_error_testing = num_error_testing/size_testing;
+percentage_error_testing_self = num_error_testing_self/size_testing;
 
-figure('position', [100, 100, 600, 600]);
-hold on;
-bar(0:9, [percentage_error_testing, percentage_success_self, percentage_error_1_self, percentage_error_2_self, percentage_error_3_self]);
-ylim([0 1])
+confusion_matrix_self = eye(10, 10); 
+for row = 0:9
+    for col = 0:9
+        confusion_matrix_self(row+1, col+1) = sum(yhat_x_testing_self(num_adversarial_testing+1:end, col+1) == row); 
+    end
+end
+confusion_matrix_self = confusion_matrix_self/(size_testing - num_adversarial_testing(1));
+
+figure; 
+heatmap({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, ...
+    {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, confusion_matrix_self);
+saveas(gcf, fullfile(fpath, 'confusion_matrix_self.png'));
+saveas(gcf, fullfile(fpath, 'confusion_matrix_self.fig'));
+
+% figure('position', [100, 100, 600, 600]);
+% hold on;
+% bar(0:9, [percentage_error_testing_self, percentage_success_self, percentage_error_1_self, percentage_error_2_self, percentage_error_3_self]);
+% ylim([0 1])

@@ -197,6 +197,20 @@ for y = 0:9
 end
 percentage_error_testing_self = num_error_testing_self/size_testing;
 
+confusion_matrix_self = eye(10, 10); 
+for row = 0:9
+    for col = 0:9
+        confusion_matrix_self(row+1, col+1) = sum(yhat_x_testing_self(num_adversarial_testing+1:end, col+1) == row); 
+    end
+end
+confusion_matrix_self = confusion_matrix_self/(size_testing - num_adversarial_testing(1));
+
+figure; 
+heatmap({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, ...
+    {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, confusion_matrix_self);
+saveas(gcf, fullfile(fpath, 'confusion_matrix_self.png'));
+saveas(gcf, fullfile(fpath, 'confusion_matrix_self.fig'));
+
 % figure('position', [100, 100, 600, 600]);
 % hold on;
 % bar(0:9, [percentage_error_testing_self, percentage_success_self, percentage_error_1_self, percentage_error_2_self, percentage_error_3_self]);
