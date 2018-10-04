@@ -282,16 +282,16 @@ for y = 0:9
     for i = 1:size_testing
         this_data = data_testing(:, i, y+1);   
 
-        p_y_x_testing(1, i, y+1) = (p_y_0*bmpdf(this_data, K, model_x_0.mu, model_x_0.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);
-        p_y_x_testing(2, i, y+1) = (p_y_1*bmpdf(this_data, K, model_x_1.mu, model_x_1.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);
-        p_y_x_testing(3, i, y+1) = (p_y_2*bmpdf(this_data, K, model_x_2.mu, model_x_2.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);
-        p_y_x_testing(4, i, y+1) = (p_y_3*bmpdf(this_data, K, model_x_3.mu, model_x_3.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);
-        p_y_x_testing(5, i, y+1) = (p_y_4*bmpdf(this_data, K, model_x_4.mu, model_x_4.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);
-        p_y_x_testing(6, i, y+1) = (p_y_5*bmpdf(this_data, K, model_x_5.mu, model_x_5.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);
-        p_y_x_testing(7, i, y+1) = (p_y_6*bmpdf(this_data, K, model_x_6.mu, model_x_6.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);
-        p_y_x_testing(8, i, y+1) = (p_y_7*bmpdf(this_data, K, model_x_7.mu, model_x_7.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);
-        p_y_x_testing(9, i, y+1) = (p_y_8*bmpdf(this_data, K, model_x_8.mu, model_x_8.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);
-        p_y_x_testing(10, i, y+1) = (p_y_9*bmpdf(this_data, K, model_x_9.mu, model_x_9.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w))/p_x_new(this_data);  
+        p_y_x_testing(1, i, y+1) = (p_y_0*bmpdf(this_data, K, model_x_0_new.mu, model_x_0_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);
+        p_y_x_testing(2, i, y+1) = (p_y_1*bmpdf(this_data, K, model_x_1_new.mu, model_x_1_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);
+        p_y_x_testing(3, i, y+1) = (p_y_2*bmpdf(this_data, K, model_x_2_new.mu, model_x_2_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);
+        p_y_x_testing(4, i, y+1) = (p_y_3*bmpdf(this_data, K, model_x_3_new.mu, model_x_3_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);
+        p_y_x_testing(5, i, y+1) = (p_y_4*bmpdf(this_data, K, model_x_4_new.mu, model_x_4_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);
+        p_y_x_testing(6, i, y+1) = (p_y_5*bmpdf(this_data, K, model_x_5_new.mu, model_x_5_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);
+        p_y_x_testing(7, i, y+1) = (p_y_6*bmpdf(this_data, K, model_x_6_new.mu, model_x_6_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);
+        p_y_x_testing(8, i, y+1) = (p_y_7*bmpdf(this_data, K, model_x_7_new.mu, model_x_7_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);
+        p_y_x_testing(9, i, y+1) = (p_y_8*bmpdf(this_data, K, model_x_8_new.mu, model_x_8_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);
+        p_y_x_testing(10, i, y+1) = (p_y_9*bmpdf(this_data, K, model_x_9_new.mu, model_x_9_new.w)+.1*p_y_u*bmpdf(this_data, K, model_x_u_new.mu, model_x_u_new.w))/p_x_new(this_data);  
 
         [~, index] = max(p_y_x_testing(:, i, y+1));
         yhat_x_testing(i, y+1) = index-1;
