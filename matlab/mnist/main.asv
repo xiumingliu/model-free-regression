@@ -16,15 +16,15 @@ for y = 0:9
 end
 
 %% Training data and testing data
-size_training = .7*size_data; 
-size_testing = .3*size_data; 
+size_training = .8*size_data; 
+size_testing = .2*size_data; 
 
 data_training = data(:, 1:size_training, :);
 data_testing = data(:, size_training+1:size_training+size_testing, :);
 
 %% Labeled and unlabeled training data
 % Labeled
-num_labeled = .3*size_training;
+num_labeled = .5*size_training;
 data_labeled = zeros(28^2, num_labeled, 10);
 for y = 0:9
     data_labeled(:, :, y+1) = data_training(:, 1:num_labeled, y+1);
@@ -165,17 +165,17 @@ for y = 0:9
         end
     end
 end
-percentage_error_2 = num_error_unlabeled_2./(num_unlabeled - num_adversarial);
+percentage_error_2 = num_error_unlabeled_2./(num_adversarial);
 
 num_error_unlabeled_3 = zeros(10, 1); 
 for y = 0:9
     for i = 1:num_adversarial(y+1)	
-        if (~isnan(yhat_x_unlabeled(i, y+1))) && (yhat_x_unlabeled(i, y+1) ~= )
+        if (~isnan(yhat_x_unlabeled(i, y+1))) && (yhat_x_unlabeled(i, y+1) ~= y)
             num_error_unlabeled_3(y+1) = num_error_unlabeled_3(y+1) + 1;
         end
     end
 end
-percentage_error_3 = num_error_unlabeled_3./(num_unlabeled - num_adversarial);
+percentage_error_3 = num_error_unlabeled_3./(num_adversarial);
 
 % figure; 
 % bar(0:9, [num_labeled*ones(10, 1), num_negative_lrt, num_postivie_lrt, num_testing], 'stacked');
@@ -259,15 +259,15 @@ p_y_u = (size(data_unlabeled_new, 2))/(size_training*10);
 
 % sum([p_y_0 p_y_1 p_y_2 p_y_3 p_y_4 p_y_5 p_y_6 p_y_7 p_y_8 p_y_9 p_y_u])
 
-p_x_new = @(this_data) (p_y_0*bmpdf(this_data, K, model_x_0.mu, model_x_0.w)+...
-    p_y_1*bmpdf(this_data, K, model_x_1.mu, model_x_1.w)+...
-    p_y_2*bmpdf(this_data, K, model_x_2.mu, model_x_2.w)+...
-    p_y_3*bmpdf(this_data, K, model_x_3.mu, model_x_3.w)+...
-    p_y_4*bmpdf(this_data, K, model_x_4.mu, model_x_4.w)+...
-    p_y_5*bmpdf(this_data, K, model_x_5.mu, model_x_5.w)+...
-    p_y_6*bmpdf(this_data, K, model_x_6.mu, model_x_6.w)+...
-    p_y_7*bmpdf(this_data, K, model_x_7.mu, model_x_7.w)+...
-    p_y_8*bmpdf(this_data, K, model_x_8.mu, model_x_8.w)+...
+p_x_new = @(this_data) (p_y_0*bmpdf(this_data, K, model_x_0_new.mu, model_x_0_new.w)+...
+    p_y_1*bmpdf(this_data, K, model_x_1_new.mu, model_x_1_new.w)+...
+    p_y_2*bmpdf(this_data, K, model_x_2_new.mu, model_x_2_new.w)+...
+    p_y_3*bmpdf(this_data, K, model_x_3_new.mu, model_x_3_new.w)+...
+    p_y_4*bmpdf(this_data, K, model_x_4_new.mu, model_x_4_new.w)+...
+    p_y_5*bmpdf(this_data, K, model_x_5_new.mu, model_x_5_new.w)+...
+    p_y_6*bmpdf(this_data, K, model_x_6_new.mu, model_x_6_new.w)+...
+    p_y_7*bmpdf(this_data, K, model_x_7_new.mu, model_x_7_new.w)+...
+    p_y_8*bmpdf(this_data, K, model_x_8_new.mu, model_x_8_new.w)+...
     p_y_9*bmpdf(this_data, K, model_x_9.mu, model_x_9.w)+...
     p_y_u*bmpdf(this_data, K, model_x_u.mu, model_x_u.w));
 
@@ -300,13 +300,15 @@ for y = 0:9
 end
 
 % Number of errors 
-num_error = zeros(10, 1); 
+num_error_testing = zeros(10, 1); 
 for y = 0:9
     for i = 1:size_testing
         if yhat_x_testing(i, y+1) ~= y
-            num_error(y+1) = num_error(y+1) + 1;
+            num_error_testing(y+1) = num_error_testing(y+1) + 1;
         end
     end
 end
+perc
 
-
+figure('position', [100, 100, 600, 600]);
+plot(0:9, percentage_error)
