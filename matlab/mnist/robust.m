@@ -221,23 +221,23 @@ end
 % Number of errors 
 num_error_testing = zeros(10, 1); 
 for y = 0:9
-    for i = 1:size_testing
+    for i = 1:num_adversarial_testing(1)
         if (p_y_x_max(i, y+1) > .5) && (yhat_x_testing(i, y+1) ~= y)
             num_error_testing(y+1) = num_error_testing(y+1) + 1;
         end
     end
 end
-percentage_error_testing = num_error_testing/size_testing;
+percentage_error_testing = num_error_testing/num_adversarial_testing(1);
 
 num_reject_testing = zeros(10, 1); 
 for y = 0:9
-    for i = 1:size_testing
+    for i = 1:num_adversarial_testing(1)
         if (p_y_x_max(i, y+1) <= .5)
             num_reject_testing(y+1) = num_reject_testing(y+1) + 1;
         end
     end
 end
-percentage_reject_testing = num_reject_testing/size_testing;
+percentage_reject_testing = num_reject_testing/num_adversarial_testing(1);
 
 confusion_matrix_robust = eye(10, 10); 
 for row = 0:9
@@ -253,6 +253,7 @@ heatmap({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, ...
     {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, confusion_matrix_robust);
 saveas(gcf, fullfile(fpath, 'confusion_matrix_robust.png'));
 saveas(gcf, fullfile(fpath, 'confusion_matrix_robust.fig'));
+
 
 % figure('position', [100, 100, 600, 600]);
 % hold on;

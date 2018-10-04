@@ -189,13 +189,13 @@ end
 % Number of errors 
 num_error_testing_self = zeros(10, 1); 
 for y = 0:9
-    for i = 1:size_testing
+    for i = 1:num_adversarial_testing(1)
         if yhat_x_testing_self(i, y+1) ~= y
             num_error_testing_self(y+1) = num_error_testing_self(y+1) + 1;
         end
     end
 end
-percentage_error_testing_self = num_error_testing_self/size_testing;
+percentage_error_testing_self = num_error_testing_self/num_adversarial_testing(1);
 
 confusion_matrix_self = eye(10, 10); 
 for row = 0:9

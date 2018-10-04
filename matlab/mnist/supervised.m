@@ -28,13 +28,13 @@ end
 % Number of errors 
 num_error_testing_supervised = zeros(10, 1); 
 for y = 0:9
-    for i = 1:size_testing
+    for i = 1:num_adversarial_testing(1)
         if yhat_x_testing_supervised(i, y+1) ~= y
             num_error_testing_supervised(y+1) = num_error_testing_supervised(y+1) + 1;
         end
     end
 end
-percentage_error_testing_supervised = num_error_testing_supervised/size_testing;
+percentage_error_testing_supervised = num_error_testing_supervised/num_adversarial_testing(1);
 
 confusion_matrix_supervised = eye(10, 10); 
 for row = 0:9
