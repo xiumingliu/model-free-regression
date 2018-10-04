@@ -98,3 +98,11 @@ axis off;
 set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'example_adversarial.png'));
 saveas(gcf, fullfile(fpath, 'example_adversarial.fig'));
+
+example_valid = data_testing(:, 90, 3);
+figure('position', [100, 100, 600, 600]);
+imagesc(reshape(example_valid, 28, 28)'); 
+axis off;
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+saveas(gcf, fullfile(fpath, 'example_valid.png'));
+saveas(gcf, fullfile(fpath, 'example_valid.fig'));
