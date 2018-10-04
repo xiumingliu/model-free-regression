@@ -239,6 +239,19 @@ for y = 0:9
 end
 percentage_reject_testing = num_reject_testing/size_testing;
 
+confusion_matrix_robust = eye(10, 10); 
+for row = 0:9
+    for col = 0:9
+        confusion_matrix_robust(row+1, col+1) = sum(yhat_x_testing(num_adversarial_testing+1:end, col+1) == row); 
+    end
+end
+
+figure; 
+heatmap({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, ...
+    {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}, confusion_matrix_robust);
+saveas(gcf, fullfile(fpath, 'confusion_matrix_robust.png'));
+saveas(gcf, fullfile(fpath, 'confusion_matrix_robust.fig'));
+
 % figure('position', [100, 100, 600, 600]);
 % hold on;
 % bar(0:9, [percentage_error_testing, percentage_success, percentage_error_1, percentage_error_2, percentage_error_3]);

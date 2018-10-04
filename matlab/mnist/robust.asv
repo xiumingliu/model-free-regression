@@ -232,14 +232,21 @@ percentage_error_testing = num_error_testing/size_testing;
 num_reject_testing = zeros(10, 1); 
 for y = 0:9
     for i = 1:size_testing
-        if (p_y_x_max(i, y+1) > .5) && (yhat_x_testing(i, y+1) ~= y)
+        if (p_y_x_max(i, y+1) <= .5)
             num_reject_testing(y+1) = num_reject_testing(y+1) + 1;
         end
     end
 end
 percentage_reject_testing = num_reject_testing/size_testing;
 
-figure('position', [100, 100, 600, 600]);
-hold on;
-bar(0:9, [percentage_error_testing, percentage_success, percentage_error_1, percentage_error_2, percentage_error_3]);
-ylim([0 1])
+confusion_matrix_robust = eye(10, 10); 
+for row = 0:9
+    for col = row:10
+        confusion_matrix_robust(row, col) = 
+    end
+end
+
+% figure('position', [100, 100, 600, 600]);
+% hold on;
+% bar(0:9, [percentage_error_testing, percentage_success, percentage_error_1, percentage_error_2, percentage_error_3]);
+% ylim([0 1])
