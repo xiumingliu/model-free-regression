@@ -49,7 +49,10 @@ num_testing = size_testing*ones(10, 1);
 
 figure('position', [100, 100, 600, 600]);
 bar(0:9, [num_labeled*ones(10, 1), num_unlabeled*ones(10, 1)-num_adversarial, num_adversarial, num_testing], 'stacked');
-legend({'Labeled', 'Unlabeled:good', 'Unlabeled:adversarial', 'Testing'}, 'Location', 'westoutside');
+legend({'Labeled', 'Unlabeled:good', 'Unlabeled:adversarial', 'Testing'}, 'Location', 'westoutside', 'Interpreter', 'latex');
+xlabel('Class', 'Interpreter', 'latex');
+ylabel('Number', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'data.png'));
 saveas(gcf, fullfile(fpath, 'data.fig'));
 
@@ -186,7 +189,10 @@ percentage_error_3 = num_error_unlabeled_3./(num_adversarial);
 
 figure('position', [100, 100, 600, 600]);
 bar(0:9, [num_labeled*ones(10, 1), num_negative_lrt, num_postivie_lrt, num_testing], 'stacked');
-legend({'Labeled', 'Inside Region', 'Outside Region', 'Testing'}, 'Location', 'westoutside');
+legend({'Labeled', 'Inside Similar Region', 'Outside Similar Region', 'Testing'}, 'Location', 'westoutside', 'Interpreter', 'latex');
+xlabel('Class', 'Interpreter', 'latex');
+ylabel('Number', 'Interpreter', 'latex');
+set(gca, 'FontSize', 18, 'FontWeight', 'bold')
 saveas(gcf, fullfile(fpath, 'after_lrt.png'));
 saveas(gcf, fullfile(fpath, 'after_lrt.fig'));
 
@@ -312,4 +318,6 @@ end
 percentage_error_testing = num_error_testing/size_testing;
 
 figure('position', [100, 100, 600, 600]);
-plot(0:9, percentage_error)
+hold on;
+bar(0:9, [percentage_error_testing, percentage_success, percentage_error_1, percentage_error_2, percentage_error_3]);
+ylim([0 1])
