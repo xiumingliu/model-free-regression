@@ -54,7 +54,7 @@ saveas(gcf, fullfile(fpath, 'data.png'));
 saveas(gcf, fullfile(fpath, 'data.fig'));
 
 %% Parameters
-kappa = 5;
+kappa = 3;
 K = 1;
 
 %% p(x)
@@ -309,7 +309,7 @@ for y = 0:9
         end
     end
 end
-perc
+percentage_error_testing = num_error_testing/size_testing;
 
 figure('position', [100, 100, 600, 600]);
 plot(0:9, percentage_error)
