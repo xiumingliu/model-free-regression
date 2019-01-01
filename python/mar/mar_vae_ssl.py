@@ -20,6 +20,7 @@ from keras import backend as K
 
 import numpy as np
 import matplotlib as mpl
+import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from sklearn import mixture
@@ -44,7 +45,7 @@ def missing_at_random(x, y, num_classes, max_num_labeled):
     x_unlabeled = [0]*num_classes
     y_unlabeled = [0]*num_classes
     for i in range(num_classes):
-        num_labeled = np.random.randint(1, max_num_labeled)
+        num_labeled = np.random.randint(15, max_num_labeled)
         x_labeled[i] = x[i][1:num_labeled]
         y_labeled[i] = y[i][1:num_labeled]
         x_unlabeled[i] = x[i][num_labeled+1:]
@@ -164,42 +165,117 @@ if __name__ == '__main__':
         vae.fit(np.vstack((np.vstack(x_train_labeled), np.vstack(x_train_unlabeled))), epochs=epochs, batch_size=batch_size, validation_data=(np.vstack(x_test), None))
         vae.save_weights('vae_mlp_mnist.h5')
 
+
+    # Discrete colormap
+    # define the colormap
+    cmap = cm.get_cmap("jet", 10)
+    bounds = np.linspace(0, 9, 10)
+    norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+
+    # All data
     z_mean_labeled, _, _ = encoder.predict(np.vstack(x_train_labeled), batch_size=batch_size)
     z_mean_unlabeled, _, _ = encoder.predict(np.vstack(x_train_unlabeled), batch_size=batch_size)
-    plt.figure(figsize=(6, 5))
+    fig = plt.figure(figsize=(6, 5))
     plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
-    plt.scatter(z_mean_labeled[:, 0], z_mean_labeled[:, 1], c=np.concatenate(y_train_labeled), cmap='jet')
-    plt.colorbar()
+    plt.scatter(z_mean_labeled[:, 0], z_mean_labeled[:, 1], c=np.concatenate(y_train_labeled), cmap=cmap, vmin = -0.5, vmax = 9.5)
     plt.xlabel("z[0]")
     plt.ylabel("z[1]")
+    plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
     plt.show()
     
-    # Unlabeled data 
-    gmm_unlabeled = mixture.GaussianMixture(n_components=15, covariance_type='full', max_iter=200, tol=1e-3).fit(z_mean_unlabeled)
+    def plot_nll(x_train_labeled, classK, cmap):
+        z0 = np.linspace(-6., 6.)
+        z1 = np.linspace(-6., 6.)
+        Z0, Z1 = np.meshgrid(z0, z1)
+        ZZ = np.array([Z0.ravel(), Z1.ravel()]).T
+        if classK == -1:
+            z_mean_unlabeled, _, _ = encoder.predict(np.vstack(x_train_unlabeled), batch_size=batch_size)
+            gmm = mixture.GaussianMixture(n_components=15, covariance_type='full', max_iter=200, tol=1e-3).fit(z_mean_unlabeled)
+            nll = -gmm.score_samples(ZZ)
+            nll = nll.reshape(Z0.shape)
+            plt.figure(figsize=(6, 5))
+            plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
+            plt.xlabel("z[0]")
+            plt.ylabel("z[1]")
+            plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
+            plt.colorbar()           
+            plt.title('Negative log-likelihood')
+            plt.show()
+        elif classK == -2: 
+            z_mean_labeled, _, _ = encoder.predict(np.vstack(x_train_labeled), batch_size=batch_size)
+            gmm = mixture.BayesianGaussianMixture(n_components=15, covariance_type='full', max_iter=200, tol=1e-3).fit(z_mean_labeled)
+            nll = -gmm.score_samples(ZZ)
+            nll = nll.reshape(Z0.shape)
+            z_mean_labeled, _, _ = encoder.predict(np.vstack(x_train_labeled), batch_size=batch_size)
+            plt.figure(figsize=(6, 5))
+            plt.scatter(z_mean_labeled[:, 0], z_mean_labeled[:, 1], c=np.concatenate(y_train_labeled), cmap=cmap)
+            plt.xlabel("z[0]")
+            plt.ylabel("z[1]")
+            plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
+            plt.colorbar()
+            plt.title('Negative log-likelihood')
+            plt.show()
+        else:    
+            z_mean_labeled_classK, _, _ = encoder.predict(x_train_labeled[classK], batch_size=batch_size)
+            gmm = mixture.BayesianGaussianMixture(n_components=15, covariance_type='full', max_iter=200, tol=1e-3).fit(z_mean_labeled_classK)           
+            nll = -gmm.score_samples(ZZ)
+            nll = nll.reshape(Z0.shape)
+            plt.figure(figsize=(6, 5))
+            plt.scatter(z_mean_labeled_classK[:, 0], z_mean_labeled_classK[:, 1], c=cmap(classK/10), cmap=cmap)
+            plt.xlabel("z[0]")
+            plt.ylabel("z[1]")
+            plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
+            plt.colorbar()
+            plt.title('Negative log-likelihood')
+            plt.show()
+            
+        return gmm
+      
+    pz_unlabeled = plot_nll(x_train_unlabeled, -1, cmap)
+    pz_labeled = plot_nll(x_train_labeled, -2, cmap)
+    pz_labeled_class0 = plot_nll(x_train_labeled, 0, cmap)
+    pz_labeled_class1 = plot_nll(x_train_labeled, 1, cmap)
+    pz_labeled_class2 = plot_nll(x_train_labeled, 2, cmap)
+    pz_labeled_class3 = plot_nll(x_train_labeled, 3, cmap)
+    pz_labeled_class4 = plot_nll(x_train_labeled, 4, cmap)
+    pz_labeled_class5 = plot_nll(x_train_labeled, 5, cmap)
+    pz_labeled_class6 = plot_nll(x_train_labeled, 6, cmap)
+    pz_labeled_class7 = plot_nll(x_train_labeled, 7, cmap)
+    pz_labeled_class8 = plot_nll(x_train_labeled, 8, cmap)
+    pz_labeled_class9 = plot_nll(x_train_labeled, 9, cmap)
     
-    z0 = np.linspace(-6., 6.)
-    z1 = np.linspace(-6., 6.)
-    Z0, Z1 = np.meshgrid(z0, z1)
-    ZZ = np.array([Z0.ravel(), Z1.ravel()]).T
-    nll = -gmm_unlabeled.score_samples(ZZ)
-    nll = nll.reshape(Z0.shape)
+    num_y_train_labeled = 0
+    for i in range(10):
+        num_y_train_labeled = num_y_train_labeled + y_train_labeled[i].shape[0] 
     
+    py_labeled_class0 = y_train_labeled[0].shape[0]/num_y_train_labeled
+    py_labeled_class1 = y_train_labeled[1].shape[0]/num_y_train_labeled
+    py_labeled_class2 = y_train_labeled[2].shape[0]/num_y_train_labeled
+    py_labeled_class3 = y_train_labeled[3].shape[0]/num_y_train_labeled
+    py_labeled_class4 = y_train_labeled[4].shape[0]/num_y_train_labeled
+    py_labeled_class5 = y_train_labeled[5].shape[0]/num_y_train_labeled
+    py_labeled_class6 = y_train_labeled[6].shape[0]/num_y_train_labeled
+    py_labeled_class7 = y_train_labeled[7].shape[0]/num_y_train_labeled
+    py_labeled_class8 = y_train_labeled[8].shape[0]/num_y_train_labeled
+    py_labeled_class9 = y_train_labeled[9].shape[0]/num_y_train_labeled
+    
+    def glrt(pz_labeled, pz_unlabeled, z_mean_unlabeled):
+#        z_mean_unlabeled, _, _ = encoder.predict(np.vstack(x_train_unlabeled), batch_size=batch_size)
+        ll_1 = pz_labeled.score_samples(z_mean_unlabeled)
+        ll_0 = pz_unlabeled.score_samples(z_mean_unlabeled)
+        lr = ll_1 - ll_0
+        return lr
+    
+    lr = glrt(pz_labeled, pz_unlabeled, z_mean_unlabeled)
     plt.figure(figsize=(6, 5))
-    plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
-    plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
+    plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=lr, cmap='jet')
+    plt.xlabel("z[0]")
+    plt.ylabel("z[1]")
+    plt.xlim([-6, 6])
+    plt.ylim([-6, 6])
     plt.colorbar()
-    plt.title('Negative log-likelihood predicted by a GMM')
-    plt.show()
+    plt.title('Log likelihood ratio')
+    plt.show()    
     
-    # Labeled 0
-    z_mean_labeled_0, _, _ = encoder.predict(x_train_labeled[0], batch_size=batch_size)
-    gmm_labeled_0 = mixture.GaussianMixture(n_components=15, covariance_type='full', max_iter=200, tol=1e-3).fit(z_mean_labeled_0)
     
-    nll = -gmm_labeled_0.score_samples(ZZ)
-    nll = nll.reshape(Z0.shape)
-    plt.figure(figsize=(6, 5))
-    plt.scatter(z_mean_labeled_0[:, 0], z_mean_labeled_0[:, 1], c=(0,0,0), alpha=0.05)
-    plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
-    plt.colorbar()
-    plt.title('Negative log-likelihood predicted by a GMM')
-    plt.show()
+    
