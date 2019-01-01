@@ -80,10 +80,11 @@ def sampling(args):
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 image_size = x_train.shape[1]
 
+num_classes = 10
 x_train, y_train = split_by_class(x_train, y_train, 10)
 x_test, y_test = split_by_class(x_test, y_test, 10)
 
-max_num_labeled = 500;
+max_num_labeled = 500
 x_train_labeled, y_train_labeled, x_train_unlabeled, y_train_unlabeled = missing_at_random(x_train, y_train, 10, max_num_labeled)
 
 original_dim = image_size * image_size
@@ -250,7 +251,7 @@ if __name__ == '__main__':
     pz_labeled_class9 = plot_nll(x_train_labeled, 9, cmap)
     
     num_y_train_labeled = 0
-    for i in range(10):
+    for i in range(num_classes):
         num_y_train_labeled = num_y_train_labeled + y_train_labeled[i].shape[0] 
     
     py_labeled_class0 = y_train_labeled[0].shape[0]/num_y_train_labeled
@@ -282,6 +283,49 @@ if __name__ == '__main__':
     plt.title('Log likelihood ratio test for unlabeled')
 #    plt.show()    
     plt.savefig("LRT_unlabeled_data.png")
+    
+    def assign_labeles_mle(lr, z_mean_unlabeled, num_classes):
+        index_similar_features = np.nonzero(lr > 0)
+        ll = ll = np.zeros([10, index_similar_features[0].shape[0]])
+        ll[0, :] = pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        ll[1, :] = pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        ll[2, :] = pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        ll[3, :] = pz_labeled_class3.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        ll[4, :] = pz_labeled_class4.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        ll[5, :] = pz_labeled_class5.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        ll[6, :] = pz_labeled_class6.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        ll[7, :] = pz_labeled_class7.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        ll[8, :] = pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        ll[9, :] = pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]])
+        mle_labeles = np.argmax(ll, axis=0)
+        return index_similar_features[0], mle_labeles
+    
+    index_similar_features, mle_labeles = assign_labeles_mle(lr, z_mean_unlabeled, num_classes)
+    index_unfamiliar_features = np.setdiff1d(np.arange(lr.shape[0]), index_similar_features)
+    plt.figure(figsize=(6, 5))
+    plt.scatter(z_mean_unlabeled[index_unfamiliar_features, 0], z_mean_unlabeled[index_unfamiliar_features, 1], c=(0,0,0), alpha=0.05)
+    plt.scatter(z_mean_unlabeled[index_similar_features, 0], z_mean_unlabeled[index_similar_features, 1], c=mle_labeles, cmap=cmap, vmin = -0.5, vmax = 9.5)
+    plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
+    plt.xlabel("z[0]")
+    plt.ylabel("z[1]")
+    plt.xlim([-6, 6])
+    plt.ylim([-6, 6])
+    plt.title('MLE of unlabeled training data')
+    plt.savefig("MLE_unlabeled.png")
+    
+    index_errors = np.nonzero(np.concatenate(y_train_unlabeled)[index_similar_features] != mle_labeles)
+    plt.figure(figsize=(6, 5))
+    plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
+    plt.scatter(z_mean_unlabeled[index_errors, 0], z_mean_unlabeled[index_errors, 1], c='red', alpha=0.05)
+    plt.xlabel("z[0]")
+    plt.ylabel("z[1]")
+    plt.xlim([-6, 6])
+    plt.ylim([-6, 6])
+    plt.title('Labeling errors: presentage ' +str(index_errors[0].shape[0]/index_similar_features.shape[0]))
+    plt.savefig("errors.png")
+        
+    
+    
     
     
     
