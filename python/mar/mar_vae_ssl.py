@@ -181,7 +181,9 @@ if __name__ == '__main__':
     plt.xlabel("z[0]")
     plt.ylabel("z[1]")
     plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
-    plt.show()
+#    plt.show()
+    plt.title('All training data: labeled and unlabeled')
+    plt.savefig("all_data.png")
     
     def plot_nll(x_train_labeled, classK, cmap):
         z0 = np.linspace(-6., 6.)
@@ -199,8 +201,9 @@ if __name__ == '__main__':
             plt.ylabel("z[1]")
             plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
             plt.colorbar()           
-            plt.title('Negative log-likelihood')
-            plt.show()
+            plt.title('Negative log-likelihood: unlabeled')
+#            plt.show()
+            plt.savefig("gmm_unlabeled.png")
         elif classK == -2: 
             z_mean_labeled, _, _ = encoder.predict(np.vstack(x_train_labeled), batch_size=batch_size)
             gmm = mixture.BayesianGaussianMixture(n_components=15, covariance_type='full', max_iter=200, tol=1e-3).fit(z_mean_labeled)
@@ -213,8 +216,9 @@ if __name__ == '__main__':
             plt.ylabel("z[1]")
             plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
             plt.colorbar()
-            plt.title('Negative log-likelihood')
-            plt.show()
+            plt.title('Negative log-likelihood: labeled')
+#            plt.show()
+            plt.savefig("gmm_labeled.png")
         else:    
             z_mean_labeled_classK, _, _ = encoder.predict(x_train_labeled[classK], batch_size=batch_size)
             gmm = mixture.BayesianGaussianMixture(n_components=15, covariance_type='full', max_iter=200, tol=1e-3).fit(z_mean_labeled_classK)           
@@ -226,8 +230,9 @@ if __name__ == '__main__':
             plt.ylabel("z[1]")
             plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
             plt.colorbar()
-            plt.title('Negative log-likelihood')
-            plt.show()
+            plt.title('Negative log-likelihood: '+str(classK))
+#            plt.show()
+            plt.savefig("gmm_labeled_class"+str(classK)+".png")
             
         return gmm
       
@@ -274,8 +279,11 @@ if __name__ == '__main__':
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
     plt.colorbar()
-    plt.title('Log likelihood ratio')
-    plt.show()    
+    plt.title('Log likelihood ratio test for unlabeled')
+#    plt.show()    
+    plt.savefig("LRT_unlabeled_data.png")
+    
+    
     
     
     
