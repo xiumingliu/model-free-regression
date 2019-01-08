@@ -171,13 +171,13 @@ if __name__ == '__main__':
     vae.summary()
     plot_model(vae, to_file='vae_mlp.png', show_shapes=True)
 
-    if args.weights:
-        vae.load_weights(args.weights)
-    else:
-        # train the autoencoder using both labeled and unlabeled data
-        vae.fit(np.vstack((x_train_labeled, x_train_unlabeled)), epochs=epochs, batch_size=batch_size, validation_data=(np.vstack(x_test), None))
-        vae.save_weights('vae_mlp_mnist.h5')
-
+#    if args.weights:
+#        vae.load_weights(args.weights)
+#    else:
+#        # train the autoencoder using both labeled and unlabeled data
+#        vae.fit(np.vstack((x_train_labeled, x_train_unlabeled)), epochs=epochs, batch_size=batch_size, validation_data=(np.vstack(x_test), None))
+#        vae.save_weights('vae_mlp_mnist.h5')
+    vae.load_weights('vae_mlp_mnist.h5')
 
     # Discrete colormap
     # define the colormap
@@ -237,13 +237,13 @@ if __name__ == '__main__':
             gmm = mixture.BayesianGaussianMixture(n_components=5, covariance_type='full', max_iter=500, tol=1e-3).fit(z_mean_classK)           
             nll = -gmm.score_samples(ZZ)
             nll = nll.reshape(Z0.shape)
-            plt.figure(figsize=(6, 5))
-            plt.scatter(z_mean_classK[:, 0], z_mean_classK[:, 1], c=cmap(classK/10), cmap=cmap)
-            plt.xlabel("z[0]")
-            plt.ylabel("z[1]")
-            plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
-            plt.colorbar()
-            plt.title('Negative log-likelihood: '+str(classK))
+#            plt.figure(figsize=(6, 5))
+#            plt.scatter(z_mean_classK[:, 0], z_mean_classK[:, 1], c=cmap(classK/10), cmap=cmap)
+#            plt.xlabel("z[0]")
+#            plt.ylabel("z[1]")
+#            plt.contour(Z0, Z1, nll, norm=LogNorm(vmin=1.0, vmax=1000.0), levels=np.logspace(0, 3, 10), cmap='jet')
+#            plt.colorbar()
+#            plt.title('Negative log-likelihood: '+str(classK))
 #            plt.show()
         
         return gmm
@@ -253,25 +253,25 @@ if __name__ == '__main__':
     pz_labeled = plot_nll(z_mean_labeled, y_train_labeled, -2, cmap)
     plt.savefig("gmm_labeled.png")
     pz_labeled_class0 = plot_nll(z_mean_labeled, y_train_labeled, 0, cmap)
-    plt.savefig("gmm_labeled_class0.png")
+#    plt.savefig("gmm_labeled_class0.png")
     pz_labeled_class1 = plot_nll(z_mean_labeled, y_train_labeled, 1, cmap)
-    plt.savefig("gmm_labeled_class1.png")
+#    plt.savefig("gmm_labeled_class1.png")
     pz_labeled_class2 = plot_nll(z_mean_labeled, y_train_labeled, 2, cmap)
-    plt.savefig("gmm_labeled_class2.png")
+#    plt.savefig("gmm_labeled_class2.png")
     pz_labeled_class3 = plot_nll(z_mean_labeled, y_train_labeled, 3, cmap)
-    plt.savefig("gmm_labeled_class3.png")
+#    plt.savefig("gmm_labeled_class3.png")
     pz_labeled_class4 = plot_nll(z_mean_labeled, y_train_labeled, 4, cmap)
-    plt.savefig("gmm_labeled_class4.png")
+#    plt.savefig("gmm_labeled_class4.png")
     pz_labeled_class5 = plot_nll(z_mean_labeled, y_train_labeled, 5, cmap)
-    plt.savefig("gmm_labeled_class5.png")
+#    plt.savefig("gmm_labeled_class5.png")
     pz_labeled_class6 = plot_nll(z_mean_labeled, y_train_labeled, 6, cmap)
-    plt.savefig("gmm_labeled_class6.png")
+#    plt.savefig("gmm_labeled_class6.png")
     pz_labeled_class7 = plot_nll(z_mean_labeled, y_train_labeled, 7, cmap)
-    plt.savefig("gmm_labeled_class7.png")
+#    plt.savefig("gmm_labeled_class7.png")
     pz_labeled_class8 = plot_nll(z_mean_labeled, y_train_labeled, 8, cmap)
-    plt.savefig("gmm_labeled_class8.png")
+#    plt.savefig("gmm_labeled_class8.png")
     pz_labeled_class9 = plot_nll(z_mean_labeled, y_train_labeled, 9, cmap)
-    plt.savefig("gmm_labeled_class9.png")
+#    plt.savefig("gmm_labeled_class9.png")
     
     py_prior = np.ones([10])*.1
     
@@ -306,38 +306,39 @@ if __name__ == '__main__':
 #    plt.show()    
     plt.savefig("LRT_unlabeled_data.png")
     
-    def assign_labeles_map(lr, z_mean_unlabeled, py_labeled, num_classes):
-        index_similar_features = np.nonzero(lr > 0)
-        post = np.zeros([10, index_similar_features[0].shape[0]])
-#        post[0, :] = np.exp(pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[0]
-#        post[1, :] = np.exp(pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[1]
-#        post[2, :] = np.exp(pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[2]
-#        post[3, :] = np.exp(pz_labeled_class3.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[3]
-#        post[4, :] = np.exp(pz_labeled_class4.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[4]
-#        post[5, :] = np.exp(pz_labeled_class5.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[5]
-#        post[6, :] = np.exp(pz_labeled_class6.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[6]
-#        post[7, :] = np.exp(pz_labeled_class7.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[7]
-#        post[8, :] = np.exp(pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[8]
-#        post[9, :] = np.exp(pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[9]
+#    def assign_labeles_map(lr, z_mean_unlabeled, py_labeled, num_classes):
+#        index_similar_features = np.nonzero(lr > 0)
+#        post = np.zeros([10, index_similar_features[0].shape[0]])
+##        post[0, :] = np.exp(pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[0]
+##        post[1, :] = np.exp(pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[1]
+##        post[2, :] = np.exp(pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[2]
+##        post[3, :] = np.exp(pz_labeled_class3.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[3]
+##        post[4, :] = np.exp(pz_labeled_class4.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[4]
+##        post[5, :] = np.exp(pz_labeled_class5.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[5]
+##        post[6, :] = np.exp(pz_labeled_class6.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[6]
+##        post[7, :] = np.exp(pz_labeled_class7.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[7]
+##        post[8, :] = np.exp(pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[8]
+##        post[9, :] = np.exp(pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[9]
+##        
+#        post[0, :] = np.exp(pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[0]
+#        post[1, :] = np.exp(pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[1]
+#        post[2, :] = np.exp(pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[2]
+#        post[3, :] = np.exp(pz_labeled_class3.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[3]
+#        post[4, :] = np.exp(pz_labeled_class4.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[4]
+#        post[5, :] = np.exp(pz_labeled_class5.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[5]
+#        post[6, :] = np.exp(pz_labeled_class6.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[6]
+#        post[7, :] = np.exp(pz_labeled_class7.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[7]
+#        post[8, :] = np.exp(pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[8]
+#        post[9, :] = np.exp(pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[9]
 #        
-        post[0, :] = np.exp(pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[0]
-        post[1, :] = np.exp(pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[1]
-        post[2, :] = np.exp(pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[2]
-        post[3, :] = np.exp(pz_labeled_class3.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[3]
-        post[4, :] = np.exp(pz_labeled_class4.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[4]
-        post[5, :] = np.exp(pz_labeled_class5.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[5]
-        post[6, :] = np.exp(pz_labeled_class6.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[6]
-        post[7, :] = np.exp(pz_labeled_class7.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[7]
-        post[8, :] = np.exp(pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[8]
-        post[9, :] = np.exp(pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[9]
-        
-        
-        post_labeles = np.argmax(post, axis=0)
-        return index_similar_features[0], post_labeles
+#        
+#        post_labeles = np.argmax(post, axis=0)
+#        return index_similar_features[0], post_labeles
     
     def assign_labeles_map_soft(lr, z_mean_unlabeled, py_labeled, num_classes):
-        index_similar_features = np.nonzero(lr > 0)
-        post = np.zeros([10, index_similar_features[0].shape[0]])
+        index_similar_features = np.nonzero(lr > -100)
+        index_unfamiliar_features = np.setdiff1d(np.arange(lr.shape[0]), index_similar_features)
+        post = np.zeros([10, lr.shape[0]])
 #        post[0, :] = np.exp(pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[0]
 #        post[1, :] = np.exp(pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[1]
 #        post[2, :] = np.exp(pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[2]
@@ -349,96 +350,97 @@ if __name__ == '__main__':
 #        post[8, :] = np.exp(pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[8]
 #        post[9, :] = np.exp(pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_labeled[9]
         
-        post[0, :] = np.exp(pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[0]
-        post[1, :] = np.exp(pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[1]
-        post[2, :] = np.exp(pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[2]
-        post[3, :] = np.exp(pz_labeled_class3.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[3]
-        post[4, :] = np.exp(pz_labeled_class4.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[4]
-        post[5, :] = np.exp(pz_labeled_class5.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[5]
-        post[6, :] = np.exp(pz_labeled_class6.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[6]
-        post[7, :] = np.exp(pz_labeled_class7.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[7]
-        post[8, :] = np.exp(pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[8]
-        post[9, :] = np.exp(pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[9]
+        post[0, index_similar_features[0]] = np.exp(pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[0]
+        post[1, index_similar_features[0]] = np.exp(pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[1]
+        post[2, index_similar_features[0]] = np.exp(pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[2]
+        post[3, index_similar_features[0]] = np.exp(pz_labeled_class3.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[3]
+        post[4, index_similar_features[0]] = np.exp(pz_labeled_class4.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[4]
+        post[5, index_similar_features[0]] = np.exp(pz_labeled_class5.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[5]
+        post[6, index_similar_features[0]] = np.exp(pz_labeled_class6.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[6]
+        post[7, index_similar_features[0]] = np.exp(pz_labeled_class7.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[7]
+        post[8, index_similar_features[0]] = np.exp(pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[8]
+        post[9, index_similar_features[0]] = np.exp(pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]]))*py_prior[9]
         
+        post[:, index_unfamiliar_features] = py_prior[0]
         
-        post_labeles_soft = np.zeros(index_similar_features[0].shape[0])
-        for i in range(index_similar_features[0].shape[0]):
+        post_labeles_soft = np.zeros(lr.shape[0])
+        for i in range(lr.shape[0]):
             pvals = post[:, i]/np.sum(post[:, i])
             post_labeles_soft[i] = np.nonzero(np.random.multinomial(1, pvals))[0][0]
         return index_similar_features[0], post_labeles_soft
+#    
+#    def assign_labeles_mle(lr, z_mean_unlabeled, num_classes):
+#        index_similar_features = np.nonzero(lr > 0)
+#        ll = np.zeros([10, index_similar_features[0].shape[0]])
+#        ll[0, :] = pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        ll[1, :] = pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        ll[2, :] = pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        ll[3, :] = pz_labeled_class3.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        ll[4, :] = pz_labeled_class4.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        ll[5, :] = pz_labeled_class5.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        ll[6, :] = pz_labeled_class6.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        ll[7, :] = pz_labeled_class7.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        ll[8, :] = pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        ll[9, :] = pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]])
+#        mle_labeles = np.argmax(ll, axis=0)
+#        return index_similar_features[0], mle_labeles
     
-    def assign_labeles_mle(lr, z_mean_unlabeled, num_classes):
-        index_similar_features = np.nonzero(lr > 0)
-        ll = np.zeros([10, index_similar_features[0].shape[0]])
-        ll[0, :] = pz_labeled_class0.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        ll[1, :] = pz_labeled_class1.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        ll[2, :] = pz_labeled_class2.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        ll[3, :] = pz_labeled_class3.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        ll[4, :] = pz_labeled_class4.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        ll[5, :] = pz_labeled_class5.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        ll[6, :] = pz_labeled_class6.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        ll[7, :] = pz_labeled_class7.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        ll[8, :] = pz_labeled_class8.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        ll[9, :] = pz_labeled_class9.score_samples(z_mean_unlabeled[index_similar_features[0]])
-        mle_labeles = np.argmax(ll, axis=0)
-        return index_similar_features[0], mle_labeles
-    
-    # MLE
-    index_similar_features, mle_labeles = assign_labeles_mle(lr, z_mean_unlabeled, num_classes)
-    index_unfamiliar_features = np.setdiff1d(np.arange(lr.shape[0]), index_similar_features)
-    plt.figure(figsize=(6, 5))
-    plt.scatter(z_mean_unlabeled[index_unfamiliar_features, 0], z_mean_unlabeled[index_unfamiliar_features, 1], c=(0,0,0), alpha=0.05)
-    plt.scatter(z_mean_unlabeled[index_similar_features, 0], z_mean_unlabeled[index_similar_features, 1], c=mle_labeles, cmap=cmap, vmin = -0.5, vmax = 9.5)
-    plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
-    plt.xlabel("z[0]")
-    plt.ylabel("z[1]")
-    plt.xlim([-6, 6])
-    plt.ylim([-6, 6])
-    plt.title('MLE of unlabeled training data')
-    plt.savefig("mle_unlabeled.png")
-    
-    index_errors = index_similar_features[np.nonzero(y_train_unlabeled[index_similar_features] != mle_labeles)]
-    plt.figure(figsize=(5, 5))
-    plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
-    plt.scatter(z_mean_unlabeled[index_errors, 0], z_mean_unlabeled[index_errors, 1], c='red', alpha=0.05)
-    plt.xlabel("z[0]")
-    plt.ylabel("z[1]")
-    plt.xlim([-6, 6])
-    plt.ylim([-6, 6])
-    plt.title('Labeling errors: presentage ' +str(index_errors.shape[0]/index_similar_features.shape[0]))
-    plt.savefig("mle_errors.png")
-    
-    # MAP
-    index_similar_features, map_labeles = assign_labeles_map(lr, z_mean_unlabeled, py_labeled, num_classes)
-    index_unfamiliar_features = np.setdiff1d(np.arange(lr.shape[0]), index_similar_features)
-    plt.figure(figsize=(6, 5))
-    plt.scatter(z_mean_unlabeled[index_unfamiliar_features, 0], z_mean_unlabeled[index_unfamiliar_features, 1], c=(0,0,0), alpha=0.05)
-    plt.scatter(z_mean_unlabeled[index_similar_features, 0], z_mean_unlabeled[index_similar_features, 1], c=map_labeles, cmap=cmap, vmin = -0.5, vmax = 9.5)
-    plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
-    plt.xlabel("z[0]")
-    plt.ylabel("z[1]")
-    plt.xlim([-6, 6])
-    plt.ylim([-6, 6])
-    plt.title('MAP of unlabeled training data')
-    plt.savefig("map_unlabeled.png")
-    
-    index_errors = index_similar_features[np.nonzero(y_train_unlabeled[index_similar_features] != map_labeles)]
-    plt.figure(figsize=(5, 5))
-    plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
-    plt.scatter(z_mean_unlabeled[index_errors, 0], z_mean_unlabeled[index_errors, 1], c='red', alpha=0.05)
-    plt.xlabel("z[0]")
-    plt.ylabel("z[1]")
-    plt.xlim([-6, 6])
-    plt.ylim([-6, 6])
-    plt.title('MAP labeling errors: presentage ' +str(index_errors.shape[0]/index_similar_features.shape[0]))
-    plt.savefig("map_errors.png")
+#    # MLE
+#    index_similar_features, mle_labeles = assign_labeles_mle(lr, z_mean_unlabeled, num_classes)
+#    index_unfamiliar_features = np.setdiff1d(np.arange(lr.shape[0]), index_similar_features)
+#    plt.figure(figsize=(6, 5))
+#    plt.scatter(z_mean_unlabeled[index_unfamiliar_features, 0], z_mean_unlabeled[index_unfamiliar_features, 1], c=(0,0,0), alpha=0.05)
+#    plt.scatter(z_mean_unlabeled[index_similar_features, 0], z_mean_unlabeled[index_similar_features, 1], c=mle_labeles, cmap=cmap, vmin = -0.5, vmax = 9.5)
+#    plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
+#    plt.xlabel("z[0]")
+#    plt.ylabel("z[1]")
+#    plt.xlim([-6, 6])
+#    plt.ylim([-6, 6])
+#    plt.title('MLE of unlabeled training data')
+#    plt.savefig("mle_unlabeled.png")
+#    
+#    index_errors = index_similar_features[np.nonzero(y_train_unlabeled[index_similar_features] != mle_labeles)]
+#    plt.figure(figsize=(5, 5))
+#    plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
+#    plt.scatter(z_mean_unlabeled[index_errors, 0], z_mean_unlabeled[index_errors, 1], c='red', alpha=0.05)
+#    plt.xlabel("z[0]")
+#    plt.ylabel("z[1]")
+#    plt.xlim([-6, 6])
+#    plt.ylim([-6, 6])
+#    plt.title('Labeling errors: presentage ' +str(index_errors.shape[0]/index_similar_features.shape[0]))
+#    plt.savefig("mle_errors.png")
+#    
+#    # MAP
+#    index_similar_features, map_labeles = assign_labeles_map(lr, z_mean_unlabeled, py_labeled, num_classes)
+#    index_unfamiliar_features = np.setdiff1d(np.arange(lr.shape[0]), index_similar_features)
+#    plt.figure(figsize=(6, 5))
+#    plt.scatter(z_mean_unlabeled[index_unfamiliar_features, 0], z_mean_unlabeled[index_unfamiliar_features, 1], c=(0,0,0), alpha=0.05)
+#    plt.scatter(z_mean_unlabeled[index_similar_features, 0], z_mean_unlabeled[index_similar_features, 1], c=map_labeles, cmap=cmap, vmin = -0.5, vmax = 9.5)
+#    plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
+#    plt.xlabel("z[0]")
+#    plt.ylabel("z[1]")
+#    plt.xlim([-6, 6])
+#    plt.ylim([-6, 6])
+#    plt.title('MAP of unlabeled training data')
+#    plt.savefig("map_unlabeled.png")
+#    
+#    index_errors = index_similar_features[np.nonzero(y_train_unlabeled[index_similar_features] != map_labeles)]
+#    plt.figure(figsize=(5, 5))
+#    plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
+#    plt.scatter(z_mean_unlabeled[index_errors, 0], z_mean_unlabeled[index_errors, 1], c='red', alpha=0.05)
+#    plt.xlabel("z[0]")
+#    plt.ylabel("z[1]")
+#    plt.xlim([-6, 6])
+#    plt.ylim([-6, 6])
+#    plt.title('MAP labeling errors: presentage ' +str(index_errors.shape[0]/index_similar_features.shape[0]))
+#    plt.savefig("map_errors.png")
         
     # Post sampling
     index_similar_features, map_labeles_soft = assign_labeles_map_soft(lr, z_mean_unlabeled, py_labeled, num_classes)
-    index_unfamiliar_features = np.setdiff1d(np.arange(lr.shape[0]), index_similar_features)
+#    index_unfamiliar_features = np.setdiff1d(np.arange(lr.shape[0]), index_similar_features)
     plt.figure(figsize=(6, 5))
-    plt.scatter(z_mean_unlabeled[index_unfamiliar_features, 0], z_mean_unlabeled[index_unfamiliar_features, 1], c=(0,0,0), alpha=0.05)
-    plt.scatter(z_mean_unlabeled[index_similar_features, 0], z_mean_unlabeled[index_similar_features, 1], c=map_labeles_soft, cmap=cmap, vmin = -0.5, vmax = 9.5)
+#    plt.scatter(z_mean_unlabeled[index_unfamiliar_features, 0], z_mean_unlabeled[index_unfamiliar_features, 1], c=(0,0,0), alpha=0.05)
+    plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=map_labeles_soft, cmap=cmap, vmin = -0.5, vmax = 9.5)
     plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
     plt.xlabel("z[0]")
     plt.ylabel("z[1]")
@@ -447,7 +449,7 @@ if __name__ == '__main__':
     plt.title('Posterior sampling for unlabeled training data')
     plt.savefig("post_sample_unlabeled.png")
     
-    index_errors = index_similar_features[np.nonzero(y_train_unlabeled[index_similar_features] != map_labeles_soft)]
+    index_errors = np.nonzero(y_train_unlabeled!= map_labeles_soft)
     plt.figure(figsize=(5, 5))
     plt.scatter(z_mean_unlabeled[:, 0], z_mean_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
     plt.scatter(z_mean_unlabeled[index_errors, 0], z_mean_unlabeled[index_errors, 1], c='red', alpha=0.05)
@@ -455,11 +457,11 @@ if __name__ == '__main__':
     plt.ylabel("z[1]")
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
-    plt.title('Posterior sampling errors: presentage ' +str(index_errors.shape[0]/index_similar_features.shape[0]))
+    plt.title('Posterior sampling errors: presentage ' +str(index_errors[0].shape[0]/y_train_unlabeled.shape[0]))
     plt.savefig("post_sample_errors.png")
     
-    z_mean_unlabeled_new = z_mean_unlabeled[index_unfamiliar_features, :]
-    z_mean_labeled_new = np.vstack((z_mean_labeled, z_mean_unlabeled[index_similar_features, :]))
+    z_mean_unlabeled_new = z_mean_unlabeled
+    z_mean_labeled_new = np.vstack((z_mean_labeled, z_mean_unlabeled))
     y_train_labeled_new = np.concatenate((y_train_labeled, map_labeles_soft.astype('int8')))
     
     
@@ -468,25 +470,25 @@ if __name__ == '__main__':
     pz_labeled_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, -2, cmap)
     plt.savefig("gmm_labeled_new.png")
     pz_labeled_class0_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 0, cmap)
-    plt.savefig("gmm_labeled_class0_new.png")
+#    plt.savefig("gmm_labeled_class0_new.png")
     pz_labeled_class1_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 1, cmap)
-    plt.savefig("gmm_labeled_class1_new.png")
+#    plt.savefig("gmm_labeled_class1_new.png")
     pz_labeled_class2_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 2, cmap)
-    plt.savefig("gmm_labeled_class2_new.png")
+#    plt.savefig("gmm_labeled_class2_new.png")
     pz_labeled_class3_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 3, cmap)
-    plt.savefig("gmm_labeled_class3_new.png")
+#    plt.savefig("gmm_labeled_class3_new.png")
     pz_labeled_class4_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 4, cmap)
-    plt.savefig("gmm_labeled_class4_new.png")
+#    plt.savefig("gmm_labeled_class4_new.png")
     pz_labeled_class5_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 5, cmap)
-    plt.savefig("gmm_labeled_class5_new.png")
+#    plt.savefig("gmm_labeled_class5_new.png")
     pz_labeled_class6_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 6, cmap)
-    plt.savefig("gmm_labeled_class6_new.png")
+#    plt.savefig("gmm_labeled_class6_new.png")
     pz_labeled_class7_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 7, cmap)
-    plt.savefig("gmm_labeled_class7_new.png")
+#    plt.savefig("gmm_labeled_class7_new.png")
     pz_labeled_class8_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 8, cmap)
-    plt.savefig("gmm_labeled_class8_new.png")
+#    plt.savefig("gmm_labeled_class8_new.png")
     pz_labeled_class9_new = plot_nll(z_mean_labeled_new, y_train_labeled_new, 9, cmap)
-    plt.savefig("gmm_labeled_class9_new.png")
+#    plt.savefig("gmm_labeled_class9_new.png")
     
     
     py_labeled_new = np.zeros([10])
@@ -573,5 +575,7 @@ if __name__ == '__main__':
 #    plt.ylim([-6, 6])
 #    plt.title('Error probability of actual errors')
     plt.savefig("test_pe_3.png")
+    
+    
     
     
