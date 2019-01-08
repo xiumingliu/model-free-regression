@@ -65,7 +65,7 @@ def plot_labeled_unlabeled(z_labeled, y_labeled, z_unlabeled):
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
     plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
-    plt.title('Labeled and unlabeled data')
+#    plt.title('Labeled and unlabeled data')
     plt.savefig("train_data.png")
     
 def plot_maxlrt(z_unlabeled, lrt_y): 
@@ -76,7 +76,7 @@ def plot_maxlrt(z_unlabeled, lrt_y):
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
     plt.colorbar()
-    plt.title('LRT for unlabeled data')   
+#    plt.title('LRT for unlabeled data')   
     plt.savefig("lrt.png")
     
 def plot_marginallrt(z_unlabeled, lrt_y): 
@@ -128,8 +128,8 @@ def plot_test(z_test, y_test_hat, y_test, pe_test):
     plt.ylabel("z[1]")
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
-    plt.title('Estimated error probability')
-    plt.savefig("estimated_pe_2.png")
+#    plt.title('Estimated error probability')
+    plt.savefig("estimated_pe.png")
     
 #    z_test_errors = z_test[index_errors, :]
 #    plt.figure(figsize=(6, 5))
@@ -144,9 +144,9 @@ def plot_test(z_test, y_test_hat, y_test, pe_test):
     
     plt.figure(figsize=(6, 5))
     plt.hist(pe_test[index_errors[0]], density=True)
-    plt.xlabel("Estimated error probabilities of \n misclassified testing data")
+    plt.xlabel("Estimated error probability")
     plt.ylabel("Density")
-    plt.savefig("density_pe_2.png")
+    plt.savefig("density_pe.png")
     
 def plot_topn_pe(x_test, z_test, y_test_hat, y_test, pe_test, decoder, topn):
     n = topn  # Top error probalities
