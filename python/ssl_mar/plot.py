@@ -129,7 +129,7 @@ def plot_test(z_test, y_test_hat, y_test, pe_test):
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
 #    plt.title('Estimated error probability')
-    plt.savefig("estimated_pe.png")
+    plt.savefig("estimated_pe_2.png")
     
 #    z_test_errors = z_test[index_errors, :]
 #    plt.figure(figsize=(6, 5))
@@ -146,7 +146,7 @@ def plot_test(z_test, y_test_hat, y_test, pe_test):
     plt.hist(pe_test[index_errors[0]], density=True)
     plt.xlabel("Estimated error probability")
     plt.ylabel("Density")
-    plt.savefig("density_pe.png")
+    plt.savefig("density_pe_2.png")
     
 def plot_topn_pe(x_test, z_test, y_test_hat, y_test, pe_test, decoder, topn):
     n = topn  # Top error probalities

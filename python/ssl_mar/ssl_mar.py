@@ -108,8 +108,8 @@ my_plt.plot_maxlrt(z_unlabeled, lrt_y)
 
 # Sampling from the posterior
 #y_unlabeled_hat = data.sampling_posterior_1(ll_y)
-y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
-#y_unlabeled_hat, _ = data.mle(ll_y)
+#y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
+y_unlabeled_hat, _ = data.mle(ll_y)
 #my_plt.plot_samples(z_unlabeled, y_unlabeled_hat, y_unlabeled)
 
 # GMM for labeled data + samples from posterior of each class
