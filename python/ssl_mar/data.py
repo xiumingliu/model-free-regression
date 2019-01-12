@@ -79,7 +79,7 @@ def sampling_posterior_2(ll, lrt):
     post = np.exp(ll)/(np.sum(np.exp(ll), axis = 1)[:, None])
     samples = np.zeros(ll.shape[0])
     for i in range(samples.shape[0]):
-        if np.max(lrt[i, :]) > 0:
+        if np.max(lrt[i, :]) > 1:
             samples[i] = np.nonzero(np.random.multinomial(1, post[i, :]))[0][0]
         else:
             samples[i] = np.nonzero(np.random.multinomial(1, .1*np.ones([10])))[0][0]    

@@ -163,8 +163,8 @@ def plot_test_mcar(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.savefig("estimated_pe_mcar.png")
     
     plt.figure(figsize=(5, 5))
-    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Rarely observed")
-    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Observed")
+    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="0, 1, 7")
+    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Others")
     plt.legend()
     plt.xlim([0, .9])
     plt.ylim([0, 10])
@@ -186,8 +186,8 @@ def plot_test_mcar_soft(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.savefig("estimated_pe_mcar_soft.png")
     
     plt.figure(figsize=(5, 5))
-    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Rarely observed")
-    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Observed")
+    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="0, 1, 7")
+    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Others")
     plt.legend()
     plt.xlim([0, .9])
     plt.ylim([0, 10])
@@ -209,8 +209,8 @@ def plot_test_mar(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.savefig("estimated_pe_mar.png")
     
     plt.figure(figsize=(5, 5))
-    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Rarely observed")
-    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Observed")
+    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="0, 1, 7")
+    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Others")
     plt.legend()
     plt.xlim([0, .9])
     plt.ylim([0, 10])
@@ -244,3 +244,111 @@ def plot_topn_pe(x_test, z_test, y_test_hat, y_test, pe_test, decoder, topn):
 #        plt.gray()
 #        ax.get_xaxis().set_visible(False)
 #        ax.get_yaxis().set_visible(False)
+        
+def plot_test_mar_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
+    index_errors_1 = np.nonzero(np.logical_and(y_test != y_test_hat, np.isin(y_test, leftout_classes)))
+    index_errors_2 = np.nonzero(np.logical_and(y_test != y_test_hat, np.logical_not(np.isin(y_test, leftout_classes)))) 
+    
+    index_1 = np.nonzero(np.isin(y_test, leftout_classes))
+    index_2 = np.nonzero(np.logical_not(np.isin(y_test, leftout_classes)))
+    
+    bins = np.arange(0, 1, step=0.05)
+    
+    hist_error_1, _, = np.histogram(pe_test[index_errors_1[0]], bins = bins)
+    hist_1, _, = np.histogram(pe_test[index_1[0]], bins = bins)
+    
+    hist_error_2, _, = np.histogram(pe_test[index_errors_2[0]], bins = bins)
+    hist_2, _, = np.histogram(pe_test[index_2[0]], bins = bins)
+    
+    ratio_1 = hist_error_1/(hist_1 + hist_2)
+    ratio_2 = hist_error_2/(hist_1 + hist_2)
+    ratio = hist_error_1/(hist_1 + hist_2) + hist_error_2/(hist_1 + hist_2)
+    
+    plt.figure(figsize=(5, 5))
+    plt.scatter(bins[1:], ratio_1, marker= '+', label = '0, 1, 7')
+    plt.scatter(bins[1:], ratio_2, marker= 'o', label = 'Others')
+    plt.plot(bins[1:], ratio, 'k-', label = 'All')
+    plt.legend(loc='upper left')
+#    plt.legend(loc=(0,1.04), ncol = 3)
+#    plt.legend(bbox_to_anchor=(1.04,1), borderaxespad=0)
+    plt.grid()
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.xticks(np.arange(0, 1.2, step=0.2))
+    plt.yticks(np.arange(0, 1.2, step=0.2))
+    plt.xlabel("Estimated error probability")
+    plt.ylabel("Empirical error probability")
+    plt.savefig("empirical_pe_mar.png")
+    
+    
+def plot_test_mcar_soft_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
+    index_errors_1 = np.nonzero(np.logical_and(y_test != y_test_hat, np.isin(y_test, leftout_classes)))
+    index_errors_2 = np.nonzero(np.logical_and(y_test != y_test_hat, np.logical_not(np.isin(y_test, leftout_classes)))) 
+    
+    index_1 = np.nonzero(np.isin(y_test, leftout_classes))
+    index_2 = np.nonzero(np.logical_not(np.isin(y_test, leftout_classes)))
+    
+    bins = np.arange(0, 1, step=0.05)
+    
+    hist_error_1, _, = np.histogram(pe_test[index_errors_1[0]], bins = bins)
+    hist_1, _, = np.histogram(pe_test[index_1[0]], bins = bins)
+    
+    hist_error_2, _, = np.histogram(pe_test[index_errors_2[0]], bins = bins)
+    hist_2, _, = np.histogram(pe_test[index_2[0]], bins = bins)
+    
+    ratio_1 = hist_error_1/(hist_1 + hist_2)
+    ratio_2 = hist_error_2/(hist_1 + hist_2)
+    ratio = hist_error_1/(hist_1 + hist_2) + hist_error_2/(hist_1 + hist_2)
+    
+    plt.figure(figsize=(5, 5))
+    plt.scatter(bins[1:], ratio_1, marker= '+', label = '0, 1, 7')
+    plt.scatter(bins[1:], ratio_2, marker= 'o', label = 'Others')
+    plt.plot(bins[1:], ratio, 'k-', label = 'All')
+    plt.legend(loc='upper left')
+#    plt.legend(loc=(0,1.04), ncol = 3)
+#    plt.legend(bbox_to_anchor=(1.04,1), borderaxespad=0)
+    plt.grid()
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.xticks(np.arange(0, 1.2, step=0.2))
+    plt.yticks(np.arange(0, 1.2, step=0.2))
+    plt.xlabel("Estimated error probability")
+    plt.ylabel("Empirical error probability")
+    plt.savefig("empirical_pe_mcar_soft.png")
+    
+    
+def plot_test_mcar_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
+    index_errors_1 = np.nonzero(np.logical_and(y_test != y_test_hat, np.isin(y_test, leftout_classes)))
+    index_errors_2 = np.nonzero(np.logical_and(y_test != y_test_hat, np.logical_not(np.isin(y_test, leftout_classes)))) 
+    
+    index_1 = np.nonzero(np.isin(y_test, leftout_classes))
+    index_2 = np.nonzero(np.logical_not(np.isin(y_test, leftout_classes)))
+    
+    bins = np.arange(0, 1, step=0.05)
+    
+    hist_error_1, _, = np.histogram(pe_test[index_errors_1[0]], bins = bins)
+    hist_1, _, = np.histogram(pe_test[index_1[0]], bins = bins)
+    
+    hist_error_2, _, = np.histogram(pe_test[index_errors_2[0]], bins = bins)
+    hist_2, _, = np.histogram(pe_test[index_2[0]], bins = bins)
+    
+    ratio_1 = hist_error_1/(hist_1 + hist_2)
+    ratio_2 = hist_error_2/(hist_1 + hist_2)
+    ratio = hist_error_1/(hist_1 + hist_2) + hist_error_2/(hist_1 + hist_2)
+    
+    plt.figure(figsize=(5, 5))
+    plt.scatter(bins[1:], ratio_1, marker= '+', label = '0, 1, 7')
+    plt.scatter(bins[1:], ratio_2, marker= 'o', label = 'Others')
+    plt.plot(bins[1:], ratio, 'k-', label = 'All')
+    plt.legend(loc='upper left')
+#    plt.legend(loc=(0,1.04), ncol = 3)
+#    plt.legend(bbox_to_anchor=(1.04,1), borderaxespad=0)
+    plt.grid()
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.xticks(np.arange(0, 1.2, step=0.2))
+    plt.yticks(np.arange(0, 1.2, step=0.2))
+    plt.xlabel("Estimated error probability")
+    plt.ylabel("Empirical error probability")
+    plt.savefig("empirical_pe_mcar.png")
+    
