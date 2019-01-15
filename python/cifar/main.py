@@ -7,6 +7,7 @@ Created on Thu Jan 10 14:06:06 2019
 
 from keras.layers import Dense, Input
 from keras.layers import Conv2D, Flatten, Lambda
+from keras.layers import MaxPooling2D
 from keras.layers import Reshape, Conv2DTranspose
 from keras.models import Model
 from keras.datasets import cifar10
@@ -15,7 +16,7 @@ from keras.utils import plot_model
 from keras import backend as K
 
 import numpy as np
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import argparse
 #import os
 
@@ -37,6 +38,11 @@ def sampling(args):
     epsilon = K.random_normal(shape=(batch, dim))
     return z_mean + K.exp(0.5 * z_log_var) * epsilon
 
+def vectorize_and_normalize(x, original_dim):
+    x = np.reshape(x, [-1, original_dim])
+    x = x.astype('float32') / 255
+    return x
+
 
 num_classes = 10 #
 class_names = ['airplane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
@@ -48,39 +54,31 @@ channel = 3
 num_classes = 10
 original_dim = image_size * image_size * channel
 
-x_train = np.reshape(x_train, [-1, image_size, image_size, channel])
-x_test = np.reshape(x_test, [-1, image_size, image_size, channel])
-x_train = x_train.astype('float32') / 255
-x_test = x_test.astype('float32') / 255
+
+x_train = vectorize_and_normalize(x_train, original_dim)
+x_test = vectorize_and_normalize(x_test, original_dim)
+
 
 # network parameters
-input_shape = (image_size, image_size, channel)
+input_shape = (original_dim, )
+intermediate_dim = 512
 batch_size = 128
-kernel_size = 3
-filters = 16
-latent_dim = 2
-epochs = 30
+latent_dim = 20
+epochs = 50
 
 # VAE model = encoder + decoder
 # build encoder model
 inputs = Input(shape=input_shape, name='encoder_input')
-x = inputs
-for i in range(2):
-    filters *= 2
-    x = Conv2D(filters=filters,
-               kernel_size=kernel_size,
-               activation='relu',
-               strides=2,
-               padding='same')(x)
-
-# shape info needed to build decoder model
-shape = K.int_shape(x)
-
-# generate latent vector Q(z|X)
-x = Flatten()(x)
-x = Dense(16, activation='relu')(x)
-z_mean = Dense(latent_dim, name='z_mean')(x)
-z_log_var = Dense(latent_dim, name='z_log_var')(x)
+encoded = Dense(128, activation='relu')(inputs)
+x = Dense(intermediate_dim, activation='relu')(encoded)
+encoded = Dense(intermediate_dim, activation='relu')(encoded)
+encoded = Dense(intermediate_dim, activation='relu')(encoded)
+encoded = Dense(intermediate_dim, activation='relu')(encoded)
+encoded = Dense(intermediate_dim, activation='relu')(encoded)
+encoded = Dense(intermediate_dim, activation='relu')(encoded)
+encoded = Dense(intermediate_dim, activation='relu')(encoded)
+z_mean = Dense(latent_dim, name='z_mean')(encoded)
+z_log_var = Dense(latent_dim, name='z_log_var')(encoded)
 
 # use reparameterization trick to push the sampling out as input
 # note that "output_shape" isn't necessary with the TensorFlow backend
@@ -89,70 +87,55 @@ z = Lambda(sampling, output_shape=(latent_dim,), name='z')([z_mean, z_log_var])
 # instantiate encoder model
 encoder = Model(inputs, [z_mean, z_log_var, z], name='encoder')
 encoder.summary()
-plot_model(encoder, to_file='vae_cnn_encoder.png', show_shapes=True)
+plot_model(encoder, to_file='vae_mlp_encoder.png', show_shapes=True)
 
 # build decoder model
 latent_inputs = Input(shape=(latent_dim,), name='z_sampling')
-x = Dense(shape[1] * shape[2] * shape[3], activation='relu')(latent_inputs)
-x = Reshape((shape[1], shape[2], shape[3]))(x)
-
-for i in range(2):
-    x = Conv2DTranspose(filters=filters,
-                        kernel_size=kernel_size,
-                        activation='relu',
-                        strides=2,
-                        padding='same')(x)
-    filters //= 2
-
-outputs = Conv2DTranspose(filters=3,
-                          kernel_size=kernel_size,
-                          activation='sigmoid',
-                          padding='same',
-                          name='decoder_output')(x)
+decoded  = Dense(intermediate_dim, activation='relu')(latent_inputs)
+decoded = Dense(intermediate_dim, activation='relu')(decoded)
+decoded = Dense(intermediate_dim, activation='relu')(decoded)
+decoded = Dense(intermediate_dim, activation='relu')(decoded)
+decoded = Dense(intermediate_dim, activation='relu')(decoded)
+decoded = Dense(intermediate_dim, activation='relu')(decoded)
+decoded = Dense(intermediate_dim, activation='relu')(decoded)
+x = Dense(128, activation='relu')(decoded)
+outputs = Dense(original_dim, activation='sigmoid')(x)
 
 # instantiate decoder model
 decoder = Model(latent_inputs, outputs, name='decoder')
 decoder.summary()
-plot_model(decoder, to_file='vae_cnn_decoder.png', show_shapes=True)
+plot_model(decoder, to_file='vae_mlp_decoder.png', show_shapes=True)
 
 # instantiate VAE model
 outputs = decoder(encoder(inputs)[2])
-vae = Model(inputs, outputs, name='vae')
+vae = Model(inputs, outputs, name='vae_mlp')
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    help_ = "Load h5 model trained weights"
-    parser.add_argument("-w", "--weights", help=help_)
-    help_ = "Use mse loss instead of binary cross entropy (default)"
-    parser.add_argument("-m", "--mse", help=help_, action='store_true')
-    args = parser.parse_args()
-    models = (encoder, decoder)
-    data = (x_test, y_test)
+models = (encoder, decoder)
+#    data_test = (np.vstack(x_test), np.concatenate(y_test))
+data_train = (x_train, y_train)
 
-    # VAE loss = mse_loss or xent_loss + kl_loss
-    if args.mse:
-        reconstruction_loss = mse(K.flatten(inputs), K.flatten(outputs))
-    else:
-        reconstruction_loss = binary_crossentropy(K.flatten(inputs),
-                                                  K.flatten(outputs))
+# VAE loss = mse_loss or xent_loss + kl_loss
 
-    reconstruction_loss *= image_size * image_size
-    kl_loss = 1 + z_log_var - K.square(z_mean) - K.exp(z_log_var)
-    kl_loss = K.sum(kl_loss, axis=-1)
-    kl_loss *= -0.5
-    vae_loss = K.mean(reconstruction_loss + kl_loss)
-    vae.add_loss(vae_loss)
-    vae.compile(optimizer='rmsprop')
-    vae.summary()
-    plot_model(vae, to_file='vae_cnn.png', show_shapes=True)
+reconstruction_loss = mse(inputs, outputs)
 
-    if args.weights:
-        vae.load_weights(args.weights)
-    else:
-        # train the autoencoder
-        vae.fit(x_train,
-                epochs=epochs,
-                batch_size=batch_size,
-                validation_data=(x_test, None))
-        vae.save_weights('vae_cnn_cifar.h5')
+#reconstruction_loss = binary_crossentropy(inputs, outputs)
 
+reconstruction_loss *= original_dim
+kl_loss = 1 + z_log_var - K.square(z_mean) - K.exp(z_log_var)
+kl_loss = K.sum(kl_loss, axis=-1)
+kl_loss *= -0.5
+vae_loss = K.mean(reconstruction_loss + kl_loss)
+vae.add_loss(vae_loss)
+vae.compile(optimizer='adam')
+vae.summary()
+plot_model(vae, to_file='vae_mlp.png', show_shapes=True)
+
+
+#vae.load_weights(args.weights)
+
+# train the autoencoder using both labeled and unlabeled data
+vae.fit(np.vstack((x_train, x_train)), epochs=epochs, batch_size=batch_size, validation_data=(np.vstack(x_test), None))
+vae.save_weights('vae_mlp_cifar.h5')
+
+z_train, _, _ = encoder.predict(x_train, batch_size=batch_size)
+plt.imshow(decoder.predict(z_train[10, :].reshape((1, latent_dim))).reshape((32, 32, 3)))
