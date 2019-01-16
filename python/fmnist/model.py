@@ -104,7 +104,7 @@ def my_model(original_dim):
 
 def my_model_train(x_train, x_test, original_dim):
     batch_size = 128
-    latent_dim = 3
+    latent_dim = 5
     epochs = 50
     
     # network parameters
@@ -159,6 +159,6 @@ def my_model_train(x_train, x_test, original_dim):
 #    plot_model(vae, to_file='vae_mlp.png', show_shapes=True)
 #    vae.load_weights('vae_mlp_mnist.h5')
     vae.fit(x_train, epochs=epochs, batch_size=batch_size, validation_data=(x_test, None))
-    vae.save_weights('vae_mlp_fmnist_d3.h5')
+    vae.save_weights('vae_mlp_fmnist_d5.h5')
     
     return encoder, decoder
