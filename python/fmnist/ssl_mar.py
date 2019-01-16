@@ -107,8 +107,8 @@ for i in range(10):
 #my_plt.plot_marginallrt(z_unlabeled, lrt_y)    
 
 # Sampling from the posterior
-#y_unlabeled_hat = data.sampling_posterior_1(ll_y)
-y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
+y_unlabeled_hat = data.sampling_posterior_1(ll_y)
+#y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
 #y_unlabeled_hat, _ = data.mle(ll_y)
 #my_plt.plot_samples(z_unlabeled, y_unlabeled_hat, y_unlabeled)
 
@@ -155,10 +155,10 @@ y_test_mle, pe_test_mle = data.mle(ll_y_test)
 #my_plt.plot_test(z_test, y_test_mle, y_test, pe_test_mle)
 
 #my_plt.plot_test_mar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
-my_plt.plot_test_mar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+#my_plt.plot_test_mar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_test_mcar_soft(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
-#my_plt.plot_test_mcar_soft_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+my_plt.plot_test_mcar_soft_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_test_mcar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 #my_plt.plot_test_mcar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
@@ -180,7 +180,7 @@ for j in range(10):
     this_pe_test_mle_sorted = this_pe_test_mle[np.argsort(this_pe_test_mle)]
     this_z_test_sorted = this_z_test[np.argsort(this_pe_test_mle)]
     
-    shift = 13
+    shift = 20
     
     step = np.floor((this_z_test.shape[0])/10).astype(int)
     
@@ -204,14 +204,15 @@ for j in range(10):
             plt.hot()
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
-plt.savefig("examples_mar.png")
+plt.savefig("examples_mcar_soft.png")
         
 plt.figure(figsize=(6, 5))      
 plt.imshow(heatmap)
+plt.axis('off')
 plt.clim(0,0.9)
 plt.jet()
 plt.colorbar()
-plt.savefig("heatmap_pe_mar.png")
+plt.savefig("heatmap_pe_mcar_soft.png")
 
 
 
