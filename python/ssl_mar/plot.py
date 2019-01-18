@@ -58,8 +58,8 @@ def plot_digits(decoder):
     
 def plot_labeled_unlabeled(z_labeled, y_labeled, z_unlabeled):
     plt.figure(figsize=(6, 5))
-    plt.scatter(z_unlabeled[:, 0], z_unlabeled[:, 1], c=(0,0,0), alpha=0.05)
-    plt.scatter(z_labeled[:, 0], z_labeled[:, 1], c=y_labeled, cmap=cmap, vmin = -0.5, vmax = 9.5)
+    plt.scatter(z_unlabeled[:, 0], z_unlabeled[:, 1], marker='+', c=(0,0,0), alpha=0.05)
+    plt.scatter(z_labeled[:, 0], z_labeled[:, 1], marker='+', c=y_labeled, cmap=cmap, vmin = -0.5, vmax = 9.5)
     plt.xlabel("$z_1$")
     plt.ylabel("$z_2$")
     plt.xlim([-6, 6])
@@ -70,7 +70,7 @@ def plot_labeled_unlabeled(z_labeled, y_labeled, z_unlabeled):
     
 def plot_maxlrt(z_unlabeled, lrt_y): 
     plt.figure(figsize=(6, 5))
-    plt.scatter(z_unlabeled[:, 0], z_unlabeled[:, 1], c=np.max(lrt_y, axis=1), cmap='jet', vmin = -5, vmax = 5)
+    plt.scatter(z_unlabeled[:, 0], z_unlabeled[:, 1], c=np.max(lrt_y, axis=1), marker='+', cmap='jet', vmin = -5, vmax = 5)
     plt.xlabel("$z_1$")
     plt.ylabel("$z_2$")
     plt.xlim([-6, 6])
@@ -123,7 +123,7 @@ def plot_test(z_test, y_test_hat, y_test, pe_test):
     
     
     plt.figure(figsize=(6, 5))
-    plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test, alpha=0.1, cmap='jet', vmin = 0, vmax = .9)
+    plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test, marker='+', alpha=0.1, cmap='jet', vmin = 0, vmax = .9)
     plt.colorbar()
     plt.xlabel("$z_1$")
     plt.ylabel("$z_2$")
@@ -143,18 +143,18 @@ def plot_test(z_test, y_test_hat, y_test, pe_test):
 #    plt.ylim([-6, 6])
 #    plt.title('Estimated error probability of actual errors')
     
-    plt.figure(figsize=(6, 5))
-    plt.hist(pe_test[index_errors[0]], density=True)
-    plt.xlabel("Estimated error probability")
-    plt.ylabel("Density")
-    plt.savefig("density_pe_2.png")
+#    plt.figure(figsize=(6, 5))
+#    plt.hist(pe_test[index_errors[0]], density=True)
+#    plt.xlabel("Estimated error probability")
+#    plt.ylabel("Density")
+#    plt.savefig("density_pe_2.png")
     
 def plot_test_mcar(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     index_errors_1 = np.nonzero(np.logical_and(y_test != y_test_hat, np.isin(y_test, leftout_classes)))
     index_errors_2 = np.nonzero(np.logical_and(y_test != y_test_hat, np.logical_not(np.isin(y_test, leftout_classes))))    
     
     plt.figure(figsize=(6, 5))
-    plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test, alpha=0.1, cmap='jet', vmin = 0, vmax = .9)
+    plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test, marker='+', cmap='jet', vmin = 0, vmax = .9)
     plt.colorbar()
     plt.xlabel("$z_1$")
     plt.ylabel("$z_2$")
@@ -162,22 +162,22 @@ def plot_test_mcar(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.ylim([-6, 6])
     plt.savefig("estimated_pe_mcar.png")
     
-    plt.figure(figsize=(5, 5))
-    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Unobserved")
-    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Observed")
-    plt.legend()
-    plt.xlim([0, .9])
-    plt.ylim([0, 10])
-    plt.xlabel("Estimated error probability")
-    plt.ylabel("Density")
-    plt.savefig("density_pe_mcar.png")
-    
+#    plt.figure(figsize=(5, 5))
+#    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Unobserved")
+#    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Observed")
+#    plt.legend()
+#    plt.xlim([0, .9])
+#    plt.ylim([0, 10])
+#    plt.xlabel("Estimated error probability")
+#    plt.ylabel("Density")
+#    plt.savefig("density_pe_mcar.png")
+#    
 def plot_test_mcar_soft(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     index_errors_1 = np.nonzero(np.logical_and(y_test != y_test_hat, np.isin(y_test, leftout_classes)))
     index_errors_2 = np.nonzero(np.logical_and(y_test != y_test_hat, np.logical_not(np.isin(y_test, leftout_classes))))    
     
     plt.figure(figsize=(6, 5))
-    plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test, alpha=0.1, cmap='jet', vmin = 0, vmax = .9)
+    plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test, marker='+', cmap='jet', vmin = 0, vmax = .9)
     plt.colorbar()
     plt.xlabel("$z_1$")
     plt.ylabel("$z_2$")
@@ -185,22 +185,22 @@ def plot_test_mcar_soft(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.ylim([-6, 6])
     plt.savefig("estimated_pe_mcar_soft.png")
     
-    plt.figure(figsize=(5, 5))
-    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Unobserved")
-    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Observed")
-    plt.legend()
-    plt.xlim([0, .9])
-    plt.ylim([0, 10])
-    plt.xlabel("Estimated error probability")
-    plt.ylabel("Density")
-    plt.savefig("density_pe_mcar_soft.png")
+#    plt.figure(figsize=(5, 5))
+#    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Unobserved")
+#    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Observed")
+#    plt.legend()
+#    plt.xlim([0, .9])
+#    plt.ylim([0, 10])
+#    plt.xlabel("Estimated error probability")
+#    plt.ylabel("Density")
+#    plt.savefig("density_pe_mcar_soft.png")
     
 def plot_test_mar(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     index_errors_1 = np.nonzero(np.logical_and(y_test != y_test_hat, np.isin(y_test, leftout_classes)))
     index_errors_2 = np.nonzero(np.logical_and(y_test != y_test_hat, np.logical_not(np.isin(y_test, leftout_classes))))    
     
     plt.figure(figsize=(6, 5))
-    plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test, alpha=0.1, cmap='jet', vmin = 0, vmax = .9)
+    plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test, marker='+', cmap='jet', vmin = 0, vmax = .9)
     plt.colorbar()
     plt.xlabel("$z_1$")
     plt.ylabel("$z_2$")
@@ -208,15 +208,15 @@ def plot_test_mar(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.ylim([-6, 6])
     plt.savefig("estimated_pe_mar.png")
     
-    plt.figure(figsize=(5, 5))
-    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Unobserved")
-    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Observed")
-    plt.legend()
-    plt.xlim([0, .9])
-    plt.ylim([0, 10])
-    plt.xlabel("Estimated error probability")
-    plt.ylabel("Density")
-    plt.savefig("density_pe_mar.png")
+#    plt.figure(figsize=(5, 5))
+#    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Unobserved")
+#    plt.hist(pe_test[index_errors_2[0]], density=True, alpha=.5, label="Observed")
+#    plt.legend()
+#    plt.xlim([0, .9])
+#    plt.ylim([0, 10])
+#    plt.xlabel("Estimated error probability")
+#    plt.ylabel("Density")
+#    plt.savefig("density_pe_mar.png")
     
 def plot_topn_pe(x_test, z_test, y_test_hat, y_test, pe_test, decoder, topn):
     n = topn  # Top error probalities
