@@ -34,7 +34,7 @@ def my_model(original_dim):
     # network parameters
     input_shape = (original_dim, )
     intermediate_dim = 512
-    latent_dim = 3
+    latent_dim = 5
     
     # VAE model = encoder + decoder
     # build encoder model
@@ -98,7 +98,7 @@ def my_model(original_dim):
     vae.compile(optimizer='adam')
 #    vae.summary()
 #    plot_model(vae, to_file='vae_mlp.png', show_shapes=True)
-    vae.load_weights('vae_mlp_fmnist_d3.h5')
+    vae.load_weights('vae_mlp_fmnist_d5.h5')
     
     return encoder, decoder
 

@@ -36,8 +36,8 @@ x_train = data.vectorize_and_normalize(x_train, original_dim)
 x_test = data.vectorize_and_normalize(x_test, original_dim)
 
 # Load model
-encoder, decoder = model.my_model_train(x_train, x_test, original_dim)
-#encoder, decoder = model.my_model(original_dim)
+#encoder, decoder = model.my_model_train(x_train, x_test, original_dim)
+encoder, decoder = model.my_model(original_dim)
 batch_size = 128
 
 # All train data
@@ -107,8 +107,8 @@ for i in range(10):
 #my_plt.plot_marginallrt(z_unlabeled, lrt_y)    
 
 # Sampling from the posterior
-#y_unlabeled_hat = data.sampling_posterior_1(ll_y)
-y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
+y_unlabeled_hat = data.sampling_posterior_1(ll_y)
+#y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
 #y_unlabeled_hat, _ = data.mle(ll_y)
 #my_plt.plot_samples(z_unlabeled, y_unlabeled_hat, y_unlabeled)
 
@@ -155,10 +155,10 @@ y_test_mle, pe_test_mle = data.mle(ll_y_test)
 #my_plt.plot_test(z_test, y_test_mle, y_test, pe_test_mle)
 
 #my_plt.plot_test_mar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
-my_plt.plot_test_mar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+#my_plt.plot_test_mar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_test_mcar_soft(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
-#my_plt.plot_test_mcar_soft_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+my_plt.plot_test_mcar_soft_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_test_mcar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 #my_plt.plot_test_mcar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
@@ -167,83 +167,83 @@ my_plt.plot_test_mar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_topn_pe_new(x_test, z_test, y_test_mle, y_test, pe_test_mle, decoder, 10)
 
-heatmap = np.zeros((10, 10))
-plt.figure(figsize=(5, 5))
-#    pe_sorted = pe_test[np.flip(np.argsort(pe_test))]
-    
-for j in range(10):
-    this_y_test_mle = y_test_mle[y_test == j]
-    this_pe_test_mle = pe_test_mle[y_test == j]
-    this_z_test = z_test[y_test == j, :]
-    this_x_test = x_test[y_test == j, :]
-    
-    this_y_test_mle_sorted = this_y_test_mle[np.argsort(this_pe_test_mle)]
-    this_pe_test_mle_sorted = this_pe_test_mle[np.argsort(this_pe_test_mle)]
-    this_z_test_sorted = this_z_test[np.argsort(this_pe_test_mle)]
-    this_x_test_sorted = this_x_test[np.argsort(this_pe_test_mle)]
-    
-    shift = 20
-    
-    step = np.floor((this_z_test.shape[0])/10).astype(int)
-    
-    heatmap[j, :] = this_pe_test_mle_sorted[shift:step*10+shift:step]
-    for i in range(10):
-        
-        
-        # display original
-        x_decoded = decoder.predict(this_z_test_sorted[[i+step*i+shift], :])
-#        x_decoded = x_test[np.nonzero(pe_test == pe_sorted[i])[0], :]
-        digit = x_decoded[0].reshape(28, 28)
-#        digit = this_x_test_sorted[[i+step*i+shift], :].reshape(28, 28)
-        ax = plt.subplot(10, 10, i+j*10+1)
-#        plt.title(str(j)+', '\
-#                  +str(this_y_test_mle_sorted[i+step*i]) + ', '\
-#                  +str(np.around(this_pe_test_mle_sorted[i+step*i], decimals=2)))
-        
-        plt.imshow(digit)
-        if this_y_test_mle_sorted[i+step*i+shift] == j:
-            plt.gray()
-        else:
-            plt.hot()
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
-plt.savefig("examples_mcar_soft.png")
-
-
-#figure = np.zeros((28 * 10, 28 * 10))
+#heatmap = np.zeros((10, 10))
+#plt.figure(figsize=(5, 5))
+##    pe_sorted = pe_test[np.flip(np.argsort(pe_test))]
+#    
 #for j in range(10):
 #    this_y_test_mle = y_test_mle[y_test == j]
 #    this_pe_test_mle = pe_test_mle[y_test == j]
 #    this_z_test = z_test[y_test == j, :]
+#    this_x_test = x_test[y_test == j, :]
 #    
 #    this_y_test_mle_sorted = this_y_test_mle[np.argsort(this_pe_test_mle)]
 #    this_pe_test_mle_sorted = this_pe_test_mle[np.argsort(this_pe_test_mle)]
 #    this_z_test_sorted = this_z_test[np.argsort(this_pe_test_mle)]
+#    this_x_test_sorted = this_x_test[np.argsort(this_pe_test_mle)]
 #    
-#    shift = 20
+#    shift = 10
 #    
 #    step = np.floor((this_z_test.shape[0])/10).astype(int)
+#    
+#    heatmap[j, :] = this_pe_test_mle_sorted[shift:step*10+shift:step]
 #    for i in range(10):
+#        
+#        
 #        # display original
-#        x_decoded = decoder.predict(this_z_test[[i+step*i+shift], :])
+#        x_decoded = decoder.predict(this_z_test_sorted[[i+step*i+shift], :])
 ##        x_decoded = x_test[np.nonzero(pe_test == pe_sorted[i])[0], :]
 #        digit = x_decoded[0].reshape(28, 28)
+##        digit = this_x_test_sorted[[i+step*i+shift], :].reshape(28, 28)
+#        ax = plt.subplot(10, 10, i+j*10+1)
+##        plt.title(str(j)+', '\
+##                  +str(this_y_test_mle_sorted[i+step*i]) + ', '\
+##                  +str(np.around(this_pe_test_mle_sorted[i+step*i], decimals=2)))
 #        
-#        figure[j * 28: (j + 1) * 28,
-#               i * 28: (i + 1) * 28] = digit
-#               
-#plt.figure(figsize=(10, 10))
-#plt.imshow(figure, cmap='Greys_r')
-        
-    
-        
-plt.figure(figsize=(6, 5))      
-plt.imshow(heatmap)
-plt.axis('off')
-plt.clim(0,0.9)
-plt.jet()
-plt.colorbar()
-plt.savefig("heatmap_pe_mcar_soft.png")
+#        plt.imshow(digit)
+#        if this_y_test_mle_sorted[i+step*i+shift] == j:
+#            plt.gray()
+#        else:
+#            plt.hot()
+#        ax.get_xaxis().set_visible(False)
+#        ax.get_yaxis().set_visible(False)
+#plt.savefig("examples_mcar_soft.png")
+#
+#
+##figure = np.zeros((28 * 10, 28 * 10))
+##for j in range(10):
+##    this_y_test_mle = y_test_mle[y_test == j]
+##    this_pe_test_mle = pe_test_mle[y_test == j]
+##    this_z_test = z_test[y_test == j, :]
+##    
+##    this_y_test_mle_sorted = this_y_test_mle[np.argsort(this_pe_test_mle)]
+##    this_pe_test_mle_sorted = this_pe_test_mle[np.argsort(this_pe_test_mle)]
+##    this_z_test_sorted = this_z_test[np.argsort(this_pe_test_mle)]
+##    
+##    shift = 20
+##    
+##    step = np.floor((this_z_test.shape[0])/10).astype(int)
+##    for i in range(10):
+##        # display original
+##        x_decoded = decoder.predict(this_z_test[[i+step*i+shift], :])
+###        x_decoded = x_test[np.nonzero(pe_test == pe_sorted[i])[0], :]
+##        digit = x_decoded[0].reshape(28, 28)
+##        
+##        figure[j * 28: (j + 1) * 28,
+##               i * 28: (i + 1) * 28] = digit
+##               
+##plt.figure(figsize=(10, 10))
+##plt.imshow(figure, cmap='Greys_r')
+#        
+#    
+#        
+#plt.figure(figsize=(6, 5))      
+#plt.imshow(heatmap)
+#plt.axis('off')
+#plt.clim(0,0.9)
+#plt.jet()
+#plt.colorbar()
+#plt.savefig("heatmap_pe_mcar_soft.png")
 
 
 
