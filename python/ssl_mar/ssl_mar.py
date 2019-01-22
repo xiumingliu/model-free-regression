@@ -106,8 +106,8 @@ my_plt.plot_maxlrt(z_unlabeled, lrt_y)
 
 # Sampling from the posterior
 #y_unlabeled_hat = data.sampling_posterior_1(ll_y)
-#y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
-y_unlabeled_hat, _ = data.mle(ll_y)
+y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
+#y_unlabeled_hat, _ = data.mle(ll_y)
 #my_plt.plot_samples(z_unlabeled, y_unlabeled_hat, y_unlabeled)
 
 # GMM for labeled data + samples from posterior of each class
@@ -152,14 +152,14 @@ ll_y_test[:, leftout_classes] = np.NINF
 y_test_mle, pe_test_mle = data.mle(ll_y_test)
 #my_plt.plot_test(z_test, y_test_mle, y_test, pe_test_mle)
 
-#my_plt.plot_test_mar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
-#my_plt.plot_test_mar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+my_plt.plot_test_mar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+my_plt.plot_test_mar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_test_mcar_soft(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 #my_plt.plot_test_mcar_soft_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
-my_plt.plot_test_mcar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
-my_plt.plot_test_mcar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+#my_plt.plot_test_mcar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+#my_plt.plot_test_mcar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_topn_pe(x_test, z_test, y_test_mle, y_test, pe_test_mle, decoder, 10)
 

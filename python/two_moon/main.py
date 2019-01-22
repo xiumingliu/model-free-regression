@@ -17,3 +17,5 @@ data = make_moons(n_samples=1000, noise=0.1, random_state=0)
 plt.figure(figsize=(5, 5))
 plt.scatter(data[0][:, 0], data[0][:, 1], c = data[1], cmap='jet')
 
+data_l = 
+
