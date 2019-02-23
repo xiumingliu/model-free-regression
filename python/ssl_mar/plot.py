@@ -66,7 +66,9 @@ def plot_labeled_unlabeled(z_labeled, y_labeled, z_unlabeled):
     plt.ylim([-6, 6])
     plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
 #    plt.title('Labeled and unlabeled data')
+    plt.tight_layout()
     plt.savefig("train_data.png")
+    plt.savefig("train_data.pdf", format='pdf')
     
 def plot_maxlrt(z_unlabeled, lrt_y): 
     plt.figure(figsize=(6, 5))
@@ -76,8 +78,10 @@ def plot_maxlrt(z_unlabeled, lrt_y):
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
     plt.colorbar()
-#    plt.title('LRT for unlabeled data')   
+#    plt.title('LRT for unlabeled data')  
+    plt.tight_layout()
     plt.savefig("lrt.png")
+    plt.savefig("lrt.pdf", format='pdf')
     
 def plot_marginallrt(z_unlabeled, lrt_y): 
     plt.figure(figsize=(6, 5))
@@ -160,7 +164,9 @@ def plot_test_mcar(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.ylabel("$x_2$")
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
+    plt.tight_layout()
     plt.savefig("estimated_pe_mcar.png")
+    plt.savefig("estimated_pe_mcar.pdf", format='pdf')
     
 #    plt.figure(figsize=(5, 5))
 #    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Unobserved")
@@ -183,7 +189,9 @@ def plot_test_mcar_soft(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.ylabel("$x_2$")
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
+    plt.tight_layout()
     plt.savefig("estimated_pe_mcar_soft.png")
+    plt.savefig("estimated_pe_mcar_soft.pdf", format='pdf')
     
 #    plt.figure(figsize=(5, 5))
 #    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Unobserved")
@@ -206,7 +214,9 @@ def plot_test_mar(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.ylabel("$x_2$")
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
+    plt.tight_layout()
     plt.savefig("estimated_pe_mar.png")
+    plt.savefig("estimated_pe_mar.pdf", format='pdf')
     
 #    plt.figure(figsize=(5, 5))
 #    plt.hist(pe_test[index_errors_1[0]], density=True, alpha=.5, label="Unobserved")
@@ -278,7 +288,9 @@ def plot_test_mar_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.yticks(np.arange(0, 1.2, step=0.2))
     plt.xlabel("Estimated error probability")
     plt.ylabel("Empirical error probability")
+    plt.tight_layout()
     plt.savefig("empirical_pe_mar.png")
+    plt.savefig("empirical_pe_mar.pdf", format='pdf')
     
     
 def plot_test_mcar_soft_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
@@ -314,7 +326,9 @@ def plot_test_mcar_soft_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.yticks(np.arange(0, 1.2, step=0.2))
     plt.xlabel("Estimated error probability")
     plt.ylabel("Empirical error probability")
+    plt.tight_layout()
     plt.savefig("empirical_pe_mcar_soft.png")
+    plt.savefig("empirical_pe_mcar_soft.pdf", format='pdf')
     
     
 def plot_test_mcar_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
@@ -350,5 +364,7 @@ def plot_test_mcar_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.yticks(np.arange(0, 1.2, step=0.2))
     plt.xlabel("Estimated error probability")
     plt.ylabel("Empirical error probability")
+    plt.tight_layout()
     plt.savefig("empirical_pe_mcar.png")
+    plt.savefig("empirical_pe_mcar.pdf", format='pdf')
     

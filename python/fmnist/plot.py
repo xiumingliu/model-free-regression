@@ -305,7 +305,9 @@ def plot_test_mar_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.yticks(np.arange(0, 1.2, step=0.2))
     plt.xlabel("Estimated error probability")
     plt.ylabel("Empirical error probability")
+    plt.tight_layout()
     plt.savefig("empirical_pe_mar.png")
+    plt.savefig("empirical_pe_mar.pdf", format='pdf')
     
     
 def plot_test_mcar_soft_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
@@ -341,7 +343,9 @@ def plot_test_mcar_soft_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.yticks(np.arange(0, 1.2, step=0.2))
     plt.xlabel("Estimated error probability")
     plt.ylabel("Empirical error probability")
+    plt.tight_layout()
     plt.savefig("empirical_pe_mcar_soft.png")
+    plt.savefig("empirical_pe_mcar_soft.pdf", format='pdf')
     
     
 def plot_test_mcar_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
@@ -377,5 +381,7 @@ def plot_test_mcar_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.yticks(np.arange(0, 1.2, step=0.2))
     plt.xlabel("Estimated error probability")
     plt.ylabel("Empirical error probability")
+    plt.tight_layout()
     plt.savefig("empirical_pe_mcar.png")
+    plt.savefig("empirical_pe_mcar.pdf", format='pdf')
     
