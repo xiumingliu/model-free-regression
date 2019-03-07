@@ -108,8 +108,8 @@ for i in range(10):
 
 # Sampling from the posterior
 #y_unlabeled_hat = data.sampling_posterior_1(ll_y)
-y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
-#y_unlabeled_hat, _ = data.mle(ll_y)
+#y_unlabeled_hat = data.sampling_posterior_2(ll_y, lrt_y)
+y_unlabeled_hat, _ = data.mle(ll_y)
 #my_plt.plot_samples(z_unlabeled, y_unlabeled_hat, y_unlabeled)
 
 # GMM for labeled data + samples from posterior of each class
@@ -155,13 +155,13 @@ y_test_mle, pe_test_mle = data.mle(ll_y_test)
 #my_plt.plot_test(z_test, y_test_mle, y_test, pe_test_mle)
 
 #my_plt.plot_test_mar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
-my_plt.plot_test_mar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+#my_plt.plot_test_mar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_test_mcar_soft(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 #my_plt.plot_test_mcar_soft_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_test_mcar(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
-#my_plt.plot_test_mcar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
+my_plt.plot_test_mcar_2(z_test, y_test_mle, y_test, pe_test_mle, leftout_classes)
 
 #my_plt.plot_topn_pe(x_test, z_test, y_test_mle, y_test, pe_test_mle, decoder, 10)
 
@@ -208,8 +208,8 @@ for j in range(10):
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
 #plt.tight_layout()
-plt.savefig("examples_mar.png")
-plt.savefig("examples_mar.pdf", format='pdf')
+plt.savefig("examples_mcar.png")
+plt.savefig("examples_mcar.pdf", format='pdf')
 
 ##figure = np.zeros((28 * 10, 28 * 10))
 ##for j in range(10):
@@ -245,8 +245,8 @@ plt.clim(0,0.9)
 plt.jet()
 plt.colorbar()
 plt.tight_layout()
-plt.savefig("heatmap_pe_mar.png")
-plt.savefig("heatmap_pe_mar.pdf", format='pdf')
+plt.savefig("heatmap_pe_mcar.png")
+plt.savefig("heatmap_pe_mcar.pdf", format='pdf')
 
 
 
