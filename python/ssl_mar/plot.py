@@ -64,6 +64,9 @@ def plot_labeled_unlabeled(z_labeled, y_labeled, z_unlabeled):
     plt.ylabel("$x_2$")
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
+    frame1 = plt.gca()
+    frame1.axes.xaxis.set_ticklabels([])
+    frame1.axes.yaxis.set_ticklabels([])
     plt.colorbar(ticks=[0,1,2,3,4,5,6,7,8,9])
 #    plt.title('Labeled and unlabeled data')
     plt.tight_layout()
@@ -77,6 +80,9 @@ def plot_maxlrt(z_unlabeled, lrt_y):
     plt.ylabel("$x_2$")
     plt.xlim([-6, 6])
     plt.ylim([-6, 6])
+    frame1 = plt.gca()
+    frame1.axes.xaxis.set_ticklabels([])
+    frame1.axes.yaxis.set_ticklabels([])
     plt.colorbar()
 #    plt.title('LRT for unlabeled data')  
     plt.tight_layout()
@@ -228,6 +234,21 @@ def plot_test_mar(z_test, y_test_hat, y_test, pe_test, leftout_classes):
 #    plt.ylabel("Density")
 #    plt.savefig("density_pe_mar.png")
     
+def plot_test_sl(z_test, y_test_hat, y_test, pe_test, leftout_classes):
+    index_errors_1 = np.nonzero(np.logical_and(y_test != y_test_hat, np.isin(y_test, leftout_classes)))
+    index_errors_2 = np.nonzero(np.logical_and(y_test != y_test_hat, np.logical_not(np.isin(y_test, leftout_classes))))    
+    
+    plt.figure(figsize=(6, 5))
+    plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test, marker='x', cmap='jet', vmin = 0, vmax = .9)
+    plt.colorbar()
+    plt.xlabel("$x_1$")
+    plt.ylabel("$x_2$")
+    plt.xlim([-6, 6])
+    plt.ylim([-6, 6])
+    plt.tight_layout()
+    plt.savefig("estimated_pe_sl.png")
+    plt.savefig("estimated_pe_sl.pdf", format='pdf')
+    
 def plot_topn_pe(x_test, z_test, y_test_hat, y_test, pe_test, decoder, topn):
     n = topn  # Top error probalities
     plt.figure(figsize=(30, 8))
@@ -291,6 +312,43 @@ def plot_test_mar_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
     plt.tight_layout()
     plt.savefig("empirical_pe_mar.png")
     plt.savefig("empirical_pe_mar.pdf", format='pdf')
+    
+def plot_test_sl_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):
+    index_errors_1 = np.nonzero(np.logical_and(y_test != y_test_hat, np.isin(y_test, leftout_classes)))
+    index_errors_2 = np.nonzero(np.logical_and(y_test != y_test_hat, np.logical_not(np.isin(y_test, leftout_classes)))) 
+    
+    index_1 = np.nonzero(np.isin(y_test, leftout_classes))
+    index_2 = np.nonzero(np.logical_not(np.isin(y_test, leftout_classes)))
+    
+    bins = np.arange(0, 1, step=0.05)
+    
+    hist_error_1, _, = np.histogram(pe_test[index_errors_1[0]], bins = bins)
+    hist_1, _, = np.histogram(pe_test[index_1[0]], bins = bins)
+    
+    hist_error_2, _, = np.histogram(pe_test[index_errors_2[0]], bins = bins)
+    hist_2, _, = np.histogram(pe_test[index_2[0]], bins = bins)
+    
+    ratio_1 = hist_error_1/(hist_1 + hist_2)
+    ratio_2 = hist_error_2/(hist_1 + hist_2)
+    ratio = hist_error_1/(hist_1 + hist_2) + hist_error_2/(hist_1 + hist_2)
+    
+    plt.figure(figsize=(5, 5))
+    plt.scatter(bins[1:], ratio_1, marker= '+', label = 'Unobserved')
+    plt.scatter(bins[1:], ratio_2, marker= 'o', label = 'Observed')
+    plt.plot(bins[1:], ratio, 'k-', label = 'All')
+#    plt.legend(loc='upper left')
+#    plt.legend(loc=(0,1.04), ncol = 3)
+#    plt.legend(bbox_to_anchor=(1.04,1), borderaxespad=0)
+    plt.grid()
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.xticks(np.arange(0, 1.2, step=0.2))
+    plt.yticks(np.arange(0, 1.2, step=0.2))
+    plt.xlabel("Estimated error probability")
+    plt.ylabel("Empirical error probability")
+    plt.tight_layout()
+    plt.savefig("empirical_pe_sl.png")
+    plt.savefig("empirical_pe_sl.pdf", format='pdf')
     
     
 def plot_test_mcar_soft_2(z_test, y_test_hat, y_test, pe_test, leftout_classes):

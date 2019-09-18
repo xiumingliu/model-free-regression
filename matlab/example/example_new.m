@@ -2,7 +2,7 @@ clear all
 close all
 
 %% Setup 
-fpath = 'figures5'; 
+fpath = 'figures8'; 
 
 N_labeled = 200;    % Number of labeled training data 
 N_unlabeled = 5000;  % Number of unlabeld training data
@@ -16,17 +16,17 @@ level_list = [0.001 .01 .1:.1:.9 .99 .999];
 run data_generate.m
 
 %% Histogram of outputs
-C = categorical([y_labeled; -1*ones(N_unlabeled, 1)], [0 1 -1],...
-    {'Class 0', 'Class 1', 'Unlabeled'});
-
-figure('position', [100, 100, 600, 600]); % Marginal distribution of y
-histogram(C)
-ylim([0 2000]);
-xlabel('$y$', 'Interpreter', 'latex');
-ylabel('Histogram of $y$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'histogram.png'));
-saveas(gcf, fullfile(fpath, 'histogram.fig'));
+% C = categorical([y_labeled; -1*ones(N_unlabeled, 1)], [0 1 -1],...
+%     {'Class 0', 'Class 1', 'Unlabeled'});
+% 
+% figure('position', [100, 100, 600, 600]); % Marginal distribution of y
+% histogram(C)
+% ylim([0 2000]);
+% xlabel('$y$', 'Interpreter', 'latex');
+% ylabel('Histogram of $y$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'histogram.png'));
+% saveas(gcf, fullfile(fpath, 'histogram.fig'));
 
 %% The conditional distribution of unlabeled data 
 % p_y_unlabeled = length(y_unlabeled)/(length(y_labeled) + length(y_unlabeled));    
@@ -104,35 +104,35 @@ end
 this_pi_hat = (model_xy_1.alpha/sum(model_xy_1.alpha));
 p_xy_1 = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 
-figure('position', [100, 100, 600, 600]);
-hold on
-scatter(X_0(:, 1), X_0(:, 2), 100, 'or', 'LineWidth', 3); 
-fcontour(@(x1, x2)(pdf(p_xy_0, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
-legend('Labeled, class 0', 'Location', 'southeast');
-colormap(jet);
-xlim([-5 5]);
-ylim([-5 5]);
-caxis([0 1]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
-saveas(gcf, fullfile(fpath, 'gmm_training_0.fig'));
-
-figure('position', [100, 100, 600, 600]);
-hold on
-scatter(X_1(:, 1), X_1(:, 2), 100, 'xb', 'LineWidth', 3); 
-fcontour(@(x1, x2)(pdf(p_xy_1, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
-legend('Labeled, class 1', 'Location', 'southeast');
-colormap(jet);
-xlim([-5 5]);
-ylim([-5 5]);
-caxis([0 1]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
-saveas(gcf, fullfile(fpath, 'gmm_training_1.fig'));
+% figure('position', [100, 100, 600, 600]);
+% hold on
+% scatter(X_0(:, 1), X_0(:, 2), 100, 'or', 'LineWidth', 3); 
+% fcontour(@(x1, x2)(pdf(p_xy_0, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
+% legend('Labeled, class 0', 'Location', 'southeast');
+% colormap(jet);
+% xlim([-5 5]);
+% ylim([-5 5]);
+% caxis([0 1]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'gmm_training_0.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training_0.fig'));
+% 
+% figure('position', [100, 100, 600, 600]);
+% hold on
+% scatter(X_1(:, 1), X_1(:, 2), 100, 'xb', 'LineWidth', 3); 
+% fcontour(@(x1, x2)(pdf(p_xy_1, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
+% legend('Labeled, class 1', 'Location', 'southeast');
+% colormap(jet);
+% xlim([-5 5]);
+% ylim([-5 5]);
+% caxis([0 1]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'gmm_training_1.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training_1.fig'));
 
 %% The marginal distribution p(x), using labeled and unlabeled data
 % p_x = @(x1, x2) (p_y_0*pdf(p_xy_0, [x1 x2]) + p_y_1*pdf(p_xy_1, [x1 x2]) +...
@@ -173,22 +173,22 @@ end
 this_pi_hat = (model_x.alpha/sum(model_x.alpha));
 p_x = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 
-figure('position', [100, 100, 600, 600]);
-hold on
-scatter(X(:, 1), X(:, 2), 50, 's', 'LineWidth', 1,...
-    'MarkerFaceColor','k','MarkerEdgeColor','k','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
-fcontour(@(x1, x2)(pdf(p_x, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
-legend('Unlabeled', 'Location', 'southeast');
-% colorbar;
-colormap(jet);
-xlim([-5 5]);
-ylim([-5 5]);
-caxis([0 1]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_marginal.png'));
-saveas(gcf, fullfile(fpath, 'gmm_training_marginal.fig'));
+% figure('position', [100, 100, 600, 600]);
+% hold on
+% scatter(X(:, 1), X(:, 2), 50, 's', 'LineWidth', 1,...
+%     'MarkerFaceColor','k','MarkerEdgeColor','k','MarkerFaceAlpha',.1,'MarkerEdgeAlpha',.1);
+% fcontour(@(x1, x2)(pdf(p_x, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
+% legend('Unlabeled', 'Location', 'southeast');
+% % colorbar;
+% colormap(jet);
+% xlim([-5 5]);
+% ylim([-5 5]);
+% caxis([0 1]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'gmm_training_marginal.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training_marginal.fig'));
 
 
 %% Posterior probability for unlabeled data
@@ -222,33 +222,33 @@ for n = 1:N_unlabeled
 end
 toc
 
-figure('position', [100, 100, 600, 600]); % Scatter plot 
-hold on;
-scatter(X_unlabeled(y_predict == 0, 1), X_unlabeled(y_predict == 0, 2), 100, 'or', 'LineWidth', 3);
-scatter(X_unlabeled(y_predict == 1, 1), X_unlabeled(y_predict == 1, 2), 100, 'xb', 'LineWidth', 3);
-xlim([-5 5]);
-ylim([-5 5]);
-colormap(jet)
-colorbar;
-caxis([0 1]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'labeling.png'));
-saveas(gcf, fullfile(fpath, 'labeling.fig'));
+% figure('position', [100, 100, 600, 600]); % Scatter plot 
+% hold on;
+% scatter(X_unlabeled(y_predict == 0, 1), X_unlabeled(y_predict == 0, 2), 100, 'or', 'LineWidth', 3);
+% scatter(X_unlabeled(y_predict == 1, 1), X_unlabeled(y_predict == 1, 2), 100, 'xb', 'LineWidth', 3);
+% xlim([-5 5]);
+% ylim([-5 5]);
+% colormap(jet)
+% colorbar;
+% caxis([0 1]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'labeling.png'));
+% saveas(gcf, fullfile(fpath, 'labeling.fig'));
 
 %% New probabilities
 C = categorical([y_labeled; y_predict], [0 1 -1],...
     {'Class 0', 'Class 1', 'Unlabeled'});
 
-figure('position', [100, 100, 600, 600]); % Marginal distribution of y
-histogram(C)
-ylim([0 2000]);
-xlabel('$y$', 'Interpreter', 'latex');
-ylabel('Histogram of $y$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'histogram_new.png'));
-saveas(gcf, fullfile(fpath, 'histogram_new.fig'));
+% figure('position', [100, 100, 600, 600]); % Marginal distribution of y
+% histogram(C)
+% ylim([0 2000]);
+% xlabel('$y$', 'Interpreter', 'latex');
+% ylabel('Histogram of $y$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'histogram_new.png'));
+% saveas(gcf, fullfile(fpath, 'histogram_new.fig'));
 
 % p'(x | y = 0)
 K = 2; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,35 +289,35 @@ end
 this_pi_hat = (model_xy_1.alpha/sum(model_xy_1.alpha));
 p_xy_1_new = gmdistribution(this_mu_hat', this_COV_hat, this_pi_hat);
 
-figure('position', [100, 100, 600, 600]);
-hold on
-scatter(X_0(:, 1), X_0(:, 2), 100, 'or', 'LineWidth', 3); 
-fcontour(@(x1, x2)(pdf(p_xy_0_new, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
-legend('Labeled, class 0', 'Location', 'southeast');
-colormap(jet);
-xlim([-5 5]);
-ylim([-5 5]);
-caxis([0 1]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_0_new.png'));
-saveas(gcf, fullfile(fpath, 'gmm_training_0.fig'));
-
-figure('position', [100, 100, 600, 600]);
-hold on
-scatter(X_1(:, 1), X_1(:, 2), 100, 'xb', 'LineWidth', 3); 
-fcontour(@(x1, x2)(pdf(p_xy_1_new, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
-legend('Labeled, class 1', 'Location', 'southeast');
-colormap(jet);
-xlim([-5 5]);
-ylim([-5 5]);
-caxis([0 1]);
-xlabel('$x_1$', 'Interpreter', 'latex');
-ylabel('$x_2$', 'Interpreter', 'latex');
-set(gca, 'FontSize', 18, 'FontWeight', 'bold')
-saveas(gcf, fullfile(fpath, 'gmm_training_1_new.png'));
-saveas(gcf, fullfile(fpath, 'gmm_training_1_new.fig'));
+% figure('position', [100, 100, 600, 600]);
+% hold on
+% scatter(X_0(:, 1), X_0(:, 2), 100, 'or', 'LineWidth', 3); 
+% fcontour(@(x1, x2)(pdf(p_xy_0_new, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
+% legend('Labeled, class 0', 'Location', 'southeast');
+% colormap(jet);
+% xlim([-5 5]);
+% ylim([-5 5]);
+% caxis([0 1]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'gmm_training_0_new.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training_0.fig'));
+% 
+% figure('position', [100, 100, 600, 600]);
+% hold on
+% scatter(X_1(:, 1), X_1(:, 2), 100, 'xb', 'LineWidth', 3); 
+% fcontour(@(x1, x2)(pdf(p_xy_1_new, [x1 x2])), [-5 5 -5 5], 'LevelList', level_list, 'LineWidth', 1)
+% legend('Labeled, class 1', 'Location', 'southeast');
+% colormap(jet);
+% xlim([-5 5]);
+% ylim([-5 5]);
+% caxis([0 1]);
+% xlabel('$x_1$', 'Interpreter', 'latex');
+% ylabel('$x_2$', 'Interpreter', 'latex');
+% set(gca, 'FontSize', 18, 'FontWeight', 'bold')
+% saveas(gcf, fullfile(fpath, 'gmm_training_1_new.png'));
+% saveas(gcf, fullfile(fpath, 'gmm_training_1_new.fig'));
 
 % % p'(x)
 p_x_new = @(x1, x2) (p_y_0_new*pdf(p_xy_0_new, [x1 x2]) + p_y_1_new*pdf(p_xy_1_new, [x1 x2])); 
@@ -498,8 +498,8 @@ colormap(jet)
 colorbar;
 caxis([0 1]);
 % contour(X1_test_EP, X2_test_EP, ones(size(X1_test_EP)) - y_predict_EP, 'LevelList', [0.9], 'LineWidth', 3, 'LineColor', 'k');
-contour(X1_test_EP_1, X2_test_EP_1, y_predict_EP_1, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
-contour(X1_test_EP_2, X2_test_EP_2, y_predict_EP_2, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
+% contour(X1_test_EP_1, X2_test_EP_1, y_predict_EP_1, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
+% contour(X1_test_EP_2, X2_test_EP_2, y_predict_EP_2, 'LevelList', [0.2], 'LineWidth', 3, 'LineColor', 'k');
 xlabel('$x_1$', 'Interpreter', 'latex');
 ylabel('$x_2$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 20, 'FontWeight', 'bold')
