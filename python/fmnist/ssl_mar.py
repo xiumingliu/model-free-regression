@@ -12,7 +12,7 @@ import model as model
 import numpy as np
 import matplotlib as mplt
 import matplotlib.pyplot as plt
-
+from sklearn.metrics import brier_score_loss
 from sklearn import mixture
 
 from matplotlib import rc
@@ -52,6 +52,7 @@ iteration_max = 100
 ratio_1 = np.zeros((iteration_max, 19))
 ratio_2 = np.zeros((iteration_max, 19))
 ratio = np.zeros((iteration_max, 19))
+brier_score = np.zeros(iteration_max)
 
 for iteration in range(iteration_max):
     #z_labeled, y_labeled, z_unlabeled, y_unlabeled = data.labeling_process_1(z_train, y_train, num_labeled)
@@ -174,11 +175,15 @@ for iteration in range(iteration_max):
     ratio_2[iteration, :] = hist_error_2/(hist_1 + hist_2)
     ratio[iteration, :] = hist_error_1/(hist_1 + hist_2) + hist_error_2/(hist_1 + hist_2)
     
+    brier_score[iteration] = brier_score_loss((1- np.equal(y_test_mle, y_test)), pe_test_mle)
+    
     print(iteration)
 
 # =============================================================================
 # Visualization
 # =============================================================================
+    
+average_brier_score = np.mean(brier_score)
 
 ratio_1_average = np.mean(ratio_1, axis=0)
 ratio_2_average = np.mean(ratio_2, axis=0)
@@ -188,13 +193,17 @@ plt.figure(figsize=(5, 5))
 plt.scatter(bins[1:], ratio_1_average, 120, marker= '+', label = 'Unobserved')
 plt.scatter(bins[1:], ratio_2_average, 120, marker= '.', label = 'Observed')
 plt.plot(bins[1:], ratio_average, 'k-', label = 'All')
+plt.plot(bins[1:], bins[1:], '--', color='gray')
 plt.grid()
 plt.xlim([0, 1])
 plt.ylim([0, 1])
 plt.xticks(np.arange(0, 1.2, step=0.2))
 plt.yticks(np.arange(0, 1.2, step=0.2))
-plt.xlabel(r"\textbf{Estimated}")
-plt.ylabel(r"\textbf{Empirical}")
+plt.xlabel(r"Estimated")
+plt.ylabel(r"Empirical")
+plt.title(r"Brier score: %.2f" % average_brier_score)
 plt.tight_layout()
-plt.savefig("empirical_pe_mar_fmnist_new.png")
-plt.savefig("empirical_pe_mar_fmnist_new.pdf", format='pdf')
+plt.savefig("empirical_pe_mar_fmnist_diag.png")
+plt.savefig("empirical_pe_mar_fmnist_diag.pdf", format='pdf')
+
+np.save('ratio_average_mar.npy', ratio_average)

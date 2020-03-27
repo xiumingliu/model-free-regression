@@ -12,7 +12,7 @@ import model as model
 import matplotlib.pyplot as plt
 
 import numpy as np
-
+from sklearn.metrics import brier_score_loss
 from sklearn import mixture
 
 from matplotlib import rc
@@ -174,13 +174,15 @@ for iteration in range(iteration_max):
 # Visualization
 # =============================================================================
     
+brier_score = brier_score_loss((1- np.equal(y_test_mle, y_test)), pe_test_mle)
+    
 ratio_1_average = np.mean(ratio_1, axis=0)
 ratio_2_average = np.mean(ratio_2, axis=0)
 ratio_average = np.mean(ratio, axis=0)
 
-plt.figure(figsize=(6, 5))
+plt.figure(figsize=(5, 4))
 plt.scatter(z_test[:, 0], z_test[:, 1], c=pe_test_mle, marker='x', cmap='jet', vmin = 0, vmax = .9)
-plt.colorbar()
+plt.colorbar(ticks=[0, 0.9])
 plt.xlabel(r"$x_1$")
 plt.ylabel(r"$x_2$")
 plt.xlim([-6, 6])
@@ -196,13 +198,42 @@ plt.figure(figsize=(5, 5))
 plt.scatter(bins[1:], ratio_1_average, 120, marker= '+', label = 'Unobserved')
 plt.scatter(bins[1:], ratio_2_average, 120, marker= '.', label = 'Observed')
 plt.plot(bins[1:], ratio_average, 'k-', label = 'All')
+plt.plot(bins[1:], bins[1:], '--', color='gray')
 plt.grid()
 plt.xlim([0, 1])
 plt.ylim([0, 1])
 plt.xticks(np.arange(0, 1.2, step=0.2))
 plt.yticks(np.arange(0, 1.2, step=0.2))
-plt.xlabel(r"\textbf{Estimated}")
-plt.ylabel(r"\textbf{Empirical}")
+plt.xlabel(r"Estimated")
+plt.ylabel(r"Empirical")
+plt.title(r"Brier score: %.2f" % brier_score)
 plt.tight_layout()
-plt.savefig("empirical_pe_mcar_new.png")
-plt.savefig("empirical_pe_mcar_new.pdf", format='pdf')
+plt.savefig("empirical_pe_mcar_diag.png")
+plt.savefig("empirical_pe_mcar_diag.pdf", format='pdf')
+
+np.save('ratio_average_mcar.npy', ratio_average)
+
+#score = pe_test_mle - (1- np.equal(y_test_mle, y_test))
+#
+#plt.figure()
+#plt.boxplot(score)
+#
+#loss_per_class = np.zeros(10)
+#for k in range(10):
+#    loss_per_class[k] = np.mean(score[y_test == k])
+#    
+#plt.figure()
+#plt.stem(loss_per_class)
+#plt.ylim([-1, 1])
+#
+#scores = []
+#for k in range(10):
+#    scores.append(score[y_test == k])
+#plt.figure()
+#plt.boxplot(scores, showfliers=False, positions=range(10))
+#plt.ylim([-1, 1])
+#
+#
+#plt.figure()
+#plt.hist(score)
+#plt.xlim([-1, 1])
